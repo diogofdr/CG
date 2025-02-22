@@ -1,0 +1,76 @@
+# ------------------------
+# Visual Studio
+# ------------------------
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build artifacts
+*.obj
+*.exe
+*.dll
+*.lib
+*.pdb
+*.log
+*.dbg
+*.ncb
+*.idb
+*.ipdb
+*.iobj
+*.exp
+*.appx
+*.appxsym
+*.pri
+*.pch
+*.pchi
+*.rsp
+*.tlb
+*.tli
+*.tlh
+*.cache
+*.manifest
+*.res
+*.resources
+*.Ilk
+*.metadata
+
+# Visual Studio database files
+*.sdf
+*.opensdf
+*.mdb
+*.opendb
+*.VC.db
+*.VC.opendb
+
+# Visual Studio profiler files
+*.psess
+*.vsp
+*.vspx
+TestResults/
+
+# Visual Studio Code Analysis
+*.nativecodeanalysis.xml
+*.nativecodeanalysis.sarif
+*.analysislog.xml
+
+# Build/Release folders
+[Bb]uild/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+ARM/
+ARM64/
+[Bb]in/
+[Oo]bj/
+ipch/
+out/
+
+# Visual Studio 2017/2019 cache/options directory
+.vs/
+
+# CMake folders
+CMakeCache.txt
