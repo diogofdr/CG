@@ -1,6 +1,6 @@
-^C:\USERS\TRAFF\DOCUMENTS\UNREAL PROJECTS\CG\ENGINE\CMAKELISTS.TXT
+^E:\UNIV5\CG\TRABALHO\CG\ENGINE\CMAKELISTS.TXT
 setlocal
-"C:\Program Files\CMake\bin\cmake.exe" "-SC:/Users/Traff/Documents/Unreal Projects/CG/Engine" "-BC:/Users/Traff/Documents/Unreal Projects/CG/Engine/build" --check-stamp-file "C:/Users/Traff/Documents/Unreal Projects/CG/Engine/build/CMakeFiles/generate.stamp"
+E:\Univ4\CMake\bin\cmake.exe -SE:/Univ5/CG/trabalho/CG/Engine -BE:/Univ5/CG/trabalho/CG/Engine/build --check-stamp-file E:/Univ5/CG/trabalho/CG/Engine/build/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone

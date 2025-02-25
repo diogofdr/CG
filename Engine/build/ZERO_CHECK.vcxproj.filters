@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <CustomBuild Include="C:\Users\Traff\Documents\Unreal Projects\CG\Engine\build\CMakeFiles\2b328d9ab6ae2b2e8ac07d59f98f1795\generate.stamp.rule">
+    <CustomBuild Include="E:\Univ5\CG\trabalho\CG\Engine\build\CMakeFiles\3f5b13466762c33b068fd704b183a549\generate.stamp.rule">
       <Filter>CMake Rules</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="CMake Rules">
-      <UniqueIdentifier>{3BFB0D7E-244D-3F1C-9056-9B8CE7EC181B}</UniqueIdentifier>
+      <UniqueIdentifier>{801BA190-5045-31E7-B0B1-FCFB6BC417ED}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
