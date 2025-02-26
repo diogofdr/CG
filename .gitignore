@@ -1,76 +1,59 @@
-# ------------------------
-# Visual Studio
-# ------------------------
-
-# User-specific files
+# Ignore Visual Studio-specific files
+.vscode/
+.vs/
+*.vcxproj.user
+*.vcxproj.filters
 *.suo
 *.user
-*.userosscache
+*.userossc
 *.sln.docstates
 
-# Build artifacts
+# Ignore build artifacts
 *.obj
+*.o
 *.exe
 *.dll
-*.lib
 *.pdb
-*.log
-*.dbg
-*.ncb
+*.ilk
 *.idb
 *.ipdb
 *.iobj
-*.exp
-*.appx
-*.appxsym
-*.pri
-*.pch
-*.pchi
-*.rsp
-*.tlb
-*.tli
-*.tlh
-*.cache
-*.manifest
-*.res
-*.resources
-*.Ilk
-*.metadata
-
-# Visual Studio database files
+*.ncb
 *.sdf
-*.opensdf
-*.mdb
+*.tlog
+*.log
+*.lastbuildstate
+*.vcxproj*
+*.aps
+*.pch
+*.manifest
+*.cache
 *.opendb
 *.VC.db
-*.VC.opendb
 
-# Visual Studio profiler files
-*.psess
-*.vsp
-*.vspx
-TestResults/
-
-# Visual Studio Code Analysis
-*.nativecodeanalysis.xml
-*.nativecodeanalysis.sarif
-*.analysislog.xml
-
-# Build/Release folders
-[Bb]uild/
-[Dd]ebug/
-[Rr]elease/
+# Ignore generated Debug & Release folders
+Debug/
+Release/
 x64/
 x86/
-ARM/
-ARM64/
-[Bb]in/
-[Oo]bj/
 ipch/
-out/
 
-# Visual Studio 2017/2019 cache/options directory
-.vs/
-
-# CMake folders
+# Ignore CMake-generated files (if using CMake)
+CMakeLists.txt.user
 CMakeCache.txt
+CMakeFiles/
+cmake-build-*/
+
+# Ignore compiled libraries
+*.lib
+*.a
+*.so
+*.dylib
+*.exp
+*.rsp
+
+# Ignore temporary and lock files
+*.tmp
+*.lock
+*.lck
+
