@@ -5,7 +5,6 @@
 #include <fstream>
 #include <sstream>
 #include "../../tinyxml2/tinyxml2.h"
-#include <../glew/GL/glew.h>
 #include <GL/glut.h>
 #endif
 
@@ -133,7 +132,7 @@ void importvertices(int modelIndex, const char* filepath) {
         models[modelIndex].vertices[count_points + 1] = y;
         models[modelIndex].vertices[count_points + 2] = z;
 
-        printf("Vertex %d: %f %f %f\n", count_points / 3, x, y, z); // Para debug
+        //printf("Vertex %d: %f %f %f\n", count_points / 3, x, y, z); // Para debug
 
         count_points += 3;
     }
