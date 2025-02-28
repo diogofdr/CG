@@ -4,8 +4,8 @@
     <ClCompile Include="E:\Univ5\CG\trabalho\CG\Engine\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\tinyxml2\tinyxml2.cpp">
-      <Filter>Source Files\tinyxml2</Filter>
+    <ClCompile Include="E:\Univ5\CG\trabalho\CG\Engine\tinyxml2\tinyxml2.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -15,13 +15,5 @@
     <Filter Include="Source Files">
       <UniqueIdentifier>{9AC1EDBD-0088-3A7E-8A0F-777A8DAC82EB}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\tinyxml2">
-      <UniqueIdentifier>{75cb956c-c01d-46a2-993a-70a09d35c424}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\tinyxml2\tinyxml2.h">
-      <Filter>Source Files\tinyxml2</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

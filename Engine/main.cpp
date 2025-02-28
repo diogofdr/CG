@@ -5,6 +5,7 @@
 #include <fstream>
 #include <sstream>
 #include "../../tinyxml2/tinyxml2.h"
+#include <../glew/GL/glew.h>
 #include <GL/glut.h>
 #endif
 
@@ -14,17 +15,28 @@
 
 using namespace tinyxml2;
 
+#define MAX_MODELS 100
+#define MAX_FILENAME_LENGTH 64
+
 tinyxml2::XMLDocument doc;
 
-int numV;
 int windowWidth, windowHeight;
 float cameraPosX, cameraPosY, cameraPosZ;
 float cameraLookAtX, cameraLookAtY, cameraLookAtZ;
 float cameraUpX, cameraUpY, cameraUpZ;
 float cameraFov, cameraNear, cameraFar;
-//std::vector<const char*> modelFiles;
 
-// Função para carregar o arquivo XML e extrair as informações
+char modelfiles[MAX_MODELS][MAX_FILENAME_LENGTH];
+int modelCount = 0;
+
+// Estrutura para guardar os vértices de cada modelo
+struct Model {
+    int numVertices;
+    std::vector<float> vertices;
+};
+
+Model models[MAX_MODELS]; // Array com os dados reais
+
 void loadXMLData(const char* fname) {
     XMLError eResult = doc.LoadFile(fname);
     if (eResult != XML_SUCCESS) {
@@ -32,7 +44,6 @@ void loadXMLData(const char* fname) {
         return;
     }
 
-    // Extrair informações da tag <window>
     XMLElement* world = doc.FirstChildElement("world");
     if (!world) {
         std::cerr << "Elemento <world> não encontrado!" << std::endl;
@@ -45,10 +56,8 @@ void loadXMLData(const char* fname) {
         window->QueryIntAttribute("height", &windowHeight);
     }
 
-    // Extrair informações da tag <camera>
     XMLElement* camera = world->FirstChildElement("camera");
     if (camera) {
-        // Posição
         XMLElement* position = camera->FirstChildElement("position");
         if (position) {
             position->QueryFloatAttribute("x", &cameraPosX);
@@ -56,7 +65,6 @@ void loadXMLData(const char* fname) {
             position->QueryFloatAttribute("z", &cameraPosZ);
         }
 
-        // LookAt
         XMLElement* lookAt = camera->FirstChildElement("lookAt");
         if (lookAt) {
             lookAt->QueryFloatAttribute("x", &cameraLookAtX);
@@ -64,7 +72,6 @@ void loadXMLData(const char* fname) {
             lookAt->QueryFloatAttribute("z", &cameraLookAtZ);
         }
 
-        // Up vector
         XMLElement* up = camera->FirstChildElement("up");
         if (up) {
             up->QueryFloatAttribute("x", &cameraUpX);
@@ -72,7 +79,6 @@ void loadXMLData(const char* fname) {
             up->QueryFloatAttribute("z", &cameraUpZ);
         }
 
-        // Projection
         XMLElement* projection = camera->FirstChildElement("projection");
         if (projection) {
             projection->QueryFloatAttribute("fov", &cameraFov);
@@ -81,58 +87,59 @@ void loadXMLData(const char* fname) {
         }
     }
 
-    /*// Extrair os modelos do grupo
     XMLElement* group = world->FirstChildElement("group");
     if (group) {
-        XMLElement* models = group->FirstChildElement("models");
-        if (models) {
-            for (XMLElement* model = models->FirstChildElement("model"); model != nullptr; model = model->NextSiblingElement("model")) {
-                const char* file = model->Attribute("file");
-                if (file) {
-                    modelFiles.push_back(file); // Armazena o nome do arquivo 3D
+        XMLElement* modelsNode = group->FirstChildElement("models");
+        if (modelsNode) {
+            XMLElement* model = modelsNode->FirstChildElement("model");
+            while (model && modelCount < MAX_MODELS) {
+                const char* fileName = model->Attribute("file");
+                if (fileName) {
+                    strncpy(modelfiles[modelCount], fileName, MAX_FILENAME_LENGTH - 1);
+                    modelfiles[modelCount][MAX_FILENAME_LENGTH - 1] = '\0';
+                    modelCount++;
                 }
+                model = model->NextSiblingElement("model");
             }
         }
-    }*/
+    }
 }
 
-/*
-void importvertices(const char* dow) {
-
-    std::ifstream file(dow);
+// Função que importa vértices para um modelo específico
+void importvertices(int modelIndex, const char* filepath) {
+    std::ifstream file(filepath);
 
     if (!file.is_open()) {
-        std::cerr << "Não foi possível abrir o ficheiro!" << std::endl;
+        std::cerr << "Não foi possível abrir: " << filepath << std::endl;
         return;
     }
 
-    // Lê o número de vértices
+    int numV;
     file >> numV;
-
-    // Usando std::vector para gerenciar a memória de forma mais segura
-    float* vert = (float*)malloc(sizeof(float) * numV * 3);
+    models[modelIndex].numVertices = numV;
+    models[modelIndex].vertices.resize(numV * 3);
 
     int count_points = 0;
     std::string linha;
-    std::getline(file, linha); // Para consumir a linha com o número de vértices
+    std::getline(file, linha); // Consome a linha do numV
 
-    // Lê os vértices
-    while (std::getline(file, linha) && count_points < numV * 3) {
+    while(std::getline(file, linha) && count_points < numV * 3) {
         std::stringstream ss(linha);
         float x, y, z;
-        char virgula; // Para ler as vírgulas
 
-        ss >> x >> virgula >> y >> virgula >> z;
+        ss >> x >> y >> z;  // Simples espaço separado
 
-        vert[count_points + 0] = x;
-        vert[count_points + 1] = y;
-        vert[count_points + 2] = z;
+        models[modelIndex].vertices[count_points + 0] = x;
+        models[modelIndex].vertices[count_points + 1] = y;
+        models[modelIndex].vertices[count_points + 2] = z;
+
+        printf("Vertex %d: %f %f %f\n", count_points / 3, x, y, z); // Para debug
 
         count_points += 3;
     }
-    file.close();
 
-}*/
+    file.close();
+}
 
 void changeSize(int w, int h) {
     if (h == 0) h = 1;
@@ -144,21 +151,62 @@ void changeSize(int w, int h) {
     glMatrixMode(GL_MODELVIEW);
 }
 
+// Desenha cada modelo
 void renderScene(void) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
     glLoadIdentity();
     gluLookAt(cameraPosX, cameraPosY, cameraPosZ,
         cameraLookAtX, cameraLookAtY, cameraLookAtZ,
         cameraUpX, cameraUpY, cameraUpZ);
 
-    glutWireTeapot(1);
+    /*// Desenho dos eixos
+    glBegin(GL_LINES);
+    glColor3f(1.0f, 0.0f, 0.0f); // Eixo X
+    glVertex3f(-100.0f, 0.0f, 0.0f);
+    glVertex3f(100.0f, 0.0f, 0.0f);
+    glColor3f(0.0f, 1.0f, 0.0f); // Eixo Y
+    glVertex3f(0.0f, -100.0f, 0.0f);
+    glVertex3f(0.0f, 100.0f, 0.0f);
+    glColor3f(0.0f, 0.0f, 1.0f); // Eixo Z
+    glVertex3f(0.0f, 0.0f, -100.0f);
+    glVertex3f(0.0f, 0.0f, 100.0f);
+    glEnd();*/
+
+
+    for (int i = 0; i < modelCount; i++) {
+        for (int v = 0; v < models[i].numVertices; v+=3) {
+            glColor3f(1.0f, 1.0f, 1.0f);
+            glBegin(GL_TRIANGLES);
+            glVertex3f(models[i].vertices[v * 3 + 0],
+                models[i].vertices[v * 3 + 1],
+                models[i].vertices[v * 3 + 2]);
+            glVertex3f(models[i].vertices[(v + 1) * 3 + 0],
+                models[i].vertices[(v + 1) * 3 + 1],
+                models[i].vertices[(v + 1) * 3 + 2]);
+            glVertex3f(models[i].vertices[(v + 2) * 3 + 0],
+                models[i].vertices[(v + 2) * 3 + 1],
+                models[i].vertices[(v + 2) * 3 + 2]);
+            glEnd();
+        }
+    }
 
     glutSwapBuffers();
 }
 
 int main(int argc, char** argv) {
     loadXMLData("../../Scene/Scene.xml");
+    /*
+    char path[128];
+    snprintf(path, sizeof(path), "../../modelos/output_%s", modelfiles[2]);
+    importvertices(1, path);*/
+
+    // Carregar os vértices de cada modelo
+    for (int i = 0; i < modelCount; i++) {
+        char path[128];
+        snprintf(path, sizeof(path), "../../modelos/%s", modelfiles[i]);
+        importvertices(i, path);
+    }
+
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
     glutInitWindowPosition(100, 100);
@@ -168,13 +216,11 @@ int main(int argc, char** argv) {
     glutDisplayFunc(renderScene);
     glutReshapeFunc(changeSize);
 
-
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     glPolygonMode(GL_FRONT, GL_LINE);
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
     glutMainLoop();
-
     return 1;
 }

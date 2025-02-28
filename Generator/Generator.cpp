@@ -53,14 +53,14 @@ void generatePlane(const std::string& filename, float size, int divisions) {
             //  (x1,z2)  ----  (x2,z2)
 
             // Triangle 1: top-left, bottom-left, top-right
-            triangles.push_back(std::make_tuple(x1, 0.0f, z1));
             triangles.push_back(std::make_tuple(x1, 0.0f, z2));
+            triangles.push_back(std::make_tuple(x1, 0.0f, z1));
             triangles.push_back(std::make_tuple(x2, 0.0f, z1));
 
             // Triangle 2: bottom-left, bottom-right, top-right
-            triangles.push_back(std::make_tuple(x1, 0.0f, z2));
-            triangles.push_back(std::make_tuple(x2, 0.0f, z2));
             triangles.push_back(std::make_tuple(x2, 0.0f, z1));
+            triangles.push_back(std::make_tuple(x2, 0.0f, z2));
+            triangles.push_back(std::make_tuple(x1, 0.0f, z2));
         }
     }
 
@@ -95,8 +95,8 @@ void generateBox(const std::string& filename, float size, int divisions) {
 
         // Triangle 2
         vertices.emplace_back(x3, y3, z3);
-        vertices.emplace_back(x2, y2, z2);
         vertices.emplace_back(x4, y4, z4);
+        vertices.emplace_back(x1, y1, z1);
     };
 
     // For each face, we step through a grid of size divisions x divisions.
@@ -109,9 +109,9 @@ void generateBox(const std::string& filename, float size, int divisions) {
             float y2 = y1 + step;
             float z = half; // front face
 
-            pushQuad( x1, y1, z,
+            pushQuad( x1, y2, z,
+                      x1, y1, z,
                       x2, y1, z,
-                      x1, y2, z,
                       x2, y2, z );
         }
     }
@@ -128,8 +128,8 @@ void generateBox(const std::string& filename, float size, int divisions) {
             // Note the order to keep consistent winding (or invert if needed).
             pushQuad( x2, y1, z,
                       x1, y1, z,
-                      x2, y2, z,
-                      x1, y2, z );
+                      x1, y2, z,
+                      x2, y2, z );
         }
     }
 
@@ -142,10 +142,10 @@ void generateBox(const std::string& filename, float size, int divisions) {
             float y2 = y1 + step;
             float x = -half;
 
-            pushQuad( x, y1, z1,
+            pushQuad( x, y2, z2,
                       x, y1, z2,
-                      x, y2, z1,
-                      x, y2, z2 );
+                      x, y1, z1,
+                      x, y2, z1 );
         }
     }
 
@@ -159,10 +159,10 @@ void generateBox(const std::string& filename, float size, int divisions) {
             float x = half;
 
             // Reverse the order to keep consistent winding
-            pushQuad( x, y1, z2,
+            pushQuad( x, y2, z1,
                       x, y1, z1,
-                      x, y2, z2,
-                      x, y2, z1 );
+                      x, y1, z2,
+                      x, y2, z2 );
         }
     }
 
@@ -175,10 +175,10 @@ void generateBox(const std::string& filename, float size, int divisions) {
             float z2 = z1 - step;
             float y = half;
 
-            pushQuad( x1, y, z1,
-                      x2, y, z1,
+            pushQuad( x2, y, z1,
+                      x2, y, z2,
                       x1, y, z2,
-                      x2, y, z2 );
+                      x1, y, z1 );
         }
     }
 
@@ -192,9 +192,9 @@ void generateBox(const std::string& filename, float size, int divisions) {
             float y = -half;
 
             // Reverse order for consistent winding
-            pushQuad( x2, y, z1,
+            pushQuad( x2, y, z2,
+                      x2, y, z1,
                       x1, y, z1,
-                      x2, y, z2,
                       x1, y, z2 );
         }
     }
@@ -239,14 +239,14 @@ void generateSphere(const std::string& filename, float radius, int slices, int s
             auto p4 = grid[stack + 1][slice + 1];
 
             // First triangle
-            triangles.push_back(p1);
             triangles.push_back(p2);
+            triangles.push_back(p1);
             triangles.push_back(p3);
 
             // Second triangle
             triangles.push_back(p3);
-            triangles.push_back(p2);
             triangles.push_back(p4);
+            triangles.push_back(p2);
         }
     }
 
@@ -317,14 +317,14 @@ void generateCone(const std::string& filename, float radius, float height,
 
             // Two triangles for each quad
             // Triangle 1: p1, p2, p3
-            vertices.push_back(p1);
             vertices.push_back(p2);
+            vertices.push_back(p1);
             vertices.push_back(p3);
 
             // Triangle 2: p3, p2, p4
             vertices.push_back(p3);
-            vertices.push_back(p2);
             vertices.push_back(p4);
+            vertices.push_back(p2);
         }
     }
 
