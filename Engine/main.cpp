@@ -262,6 +262,160 @@ void renderGroup(Group* group) {
     glPopMatrix();
 }
 
+void keys(unsigned char key, int x, int y) {
+	float zoomSpeed = 0.5f; // Ajuste a velocidade de zoom conforme necessário
+    float rotateSpeed = 1.0f;     // Velocidade de rotação (em graus)
+    float angle = rotateSpeed * M_PI / 180.0f; // Converte para radianos
+
+    // Vetor de direção da câmera para o ponto de observação
+    float dirX = cameraLookAtX - cameraPosX;
+    float dirY = cameraLookAtY - cameraPosY;
+    float dirZ = cameraLookAtZ - cameraPosZ;
+
+    // Normaliza o vetor de direção
+    float length = sqrt(dirX * dirX + dirY * dirY + dirZ * dirZ);
+    dirX /= length;
+    dirY /= length;
+    dirZ /= length;
+
+    // Vetor "up" da câmera
+    float upX = cameraUpX;
+    float upY = cameraUpY;
+    float upZ = cameraUpZ;
+
+    // Vetor perpendicular à direção e ao vetor "up" (direita)
+    float rightX = dirY * upZ - dirZ * upY;
+    float rightY = dirZ * upX - dirX * upZ;
+    float rightZ = dirX * upY - dirY * upX;
+
+    // Normaliza o vetor perpendicular
+    float rightLength = sqrt(rightX * rightX + rightY * rightY + rightZ * rightZ);
+    rightX /= rightLength;
+    rightY /= rightLength;
+    rightZ /= rightLength;
+
+    if (key == 'w' || key == 'W') {
+        // Rotaciona para cima (em torno do eixo perpendicular à direita)
+        float newDirY = dirY * cos(angle) - dirZ * sin(angle);
+        float newDirZ = dirY * sin(angle) + dirZ * cos(angle);
+        cameraLookAtY = cameraPosY + newDirY * length;
+        cameraLookAtZ = cameraPosZ + newDirZ * length;
+    }
+    else if (key == 's' || key == 'S') {
+        // Rotaciona para baixo (em torno do eixo perpendicular à direita)
+        float newDirY = dirY * cos(-angle) - dirZ * sin(-angle);
+        float newDirZ = dirY * sin(-angle) + dirZ * cos(-angle);
+        cameraLookAtY = cameraPosY + newDirY * length;
+        cameraLookAtZ = cameraPosZ + newDirZ * length;
+    }
+    else if (key == 'd' || key == 'D') {
+        // Rotaciona à esquerda (em torno do eixo Y)
+        float newDirX = dirX * cos(angle) - dirZ * sin(angle);
+        float newDirZ = dirX * sin(angle) + dirZ * cos(angle);
+        cameraLookAtX = cameraPosX + newDirX * length;
+        cameraLookAtZ = cameraPosZ + newDirZ * length;
+    }
+    else if (key == 'a' || key == 'A') {
+        // Rotaciona à direita (em torno do eixo Y)
+        float newDirX = dirX * cos(-angle) - dirZ * sin(-angle);
+        float newDirZ = dirX * sin(-angle) + dirZ * cos(-angle);
+        cameraLookAtX = cameraPosX + newDirX * length;
+        cameraLookAtZ = cameraPosZ + newDirZ * length;
+    }
+    else if (key == '+') {
+        // Zoom In: Move a câmera para frente
+        cameraPosX += dirX * zoomSpeed;
+        cameraPosY += dirY * zoomSpeed;
+        cameraPosZ += dirZ * zoomSpeed;
+        // Atualiza o ponto de observação para manter a direção
+        cameraLookAtX += dirX * zoomSpeed;
+        cameraLookAtY += dirY * zoomSpeed;
+        cameraLookAtZ += dirZ * zoomSpeed;
+    }
+    else if (key == '-') {
+        // Zoom Out: Move a câmera para trás
+        cameraPosX -= dirX * zoomSpeed;
+        cameraPosY -= dirY * zoomSpeed;
+        cameraPosZ -= dirZ * zoomSpeed;
+        // Atualiza o ponto de observação para manter a direção
+        cameraLookAtX -= dirX * zoomSpeed;
+        cameraLookAtY -= dirY * zoomSpeed;
+        cameraLookAtZ -= dirZ * zoomSpeed;
+    }
+
+    glutPostRedisplay(); // Redesenha a cena
+}
+
+void specialKeys(int key, int x, int y) {
+    float moveSpeed = 0.5f; // Ajuste a velocidade de movimento conforme necessário
+
+    // Vetor de direção da câmera para o ponto de observação
+    float dirX = cameraLookAtX - cameraPosX;
+    float dirY = cameraLookAtY - cameraPosY;
+    float dirZ = cameraLookAtZ - cameraPosZ;
+
+    // Normaliza o vetor de direção
+    float length = sqrt(dirX * dirX + dirY * dirY + dirZ * dirZ);
+    dirX /= length;
+    dirY /= length;
+    dirZ /= length;
+
+    // Vetor "up" da câmera
+    float upX = cameraUpX;
+    float upY = cameraUpY;
+    float upZ = cameraUpZ;
+
+    // Vetor perpendicular à direção e ao vetor "up" (direita)
+    float rightX = dirY * upZ - dirZ * upY;
+    float rightY = dirZ * upX - dirX * upZ;
+    float rightZ = dirX * upY - dirY * upX;
+
+    // Normaliza o vetor perpendicular
+    float rightLength = sqrt(rightX * rightX + rightY * rightY + rightZ * rightZ);
+    rightX /= rightLength;
+    rightY /= rightLength;
+    rightZ /= rightLength;
+
+    if (key == GLUT_KEY_UP) {
+        // Move a câmera para cima (ao longo do vetor "up")
+        cameraPosX += upX * moveSpeed;
+        cameraPosY += upY * moveSpeed;
+        cameraPosZ += upZ * moveSpeed;
+        cameraLookAtX += upX * moveSpeed;
+        cameraLookAtY += upY * moveSpeed;
+        cameraLookAtZ += upZ * moveSpeed;
+    }
+    else if (key == GLUT_KEY_DOWN) {
+        // Move a câmera para baixo (ao longo do vetor "up" negativo)
+        cameraPosX -= upX * moveSpeed;
+        cameraPosY -= upY * moveSpeed;
+        cameraPosZ -= upZ * moveSpeed;
+        cameraLookAtX -= upX * moveSpeed;
+        cameraLookAtY -= upY * moveSpeed;
+        cameraLookAtZ -= upZ * moveSpeed;
+    }
+    else if (key == GLUT_KEY_LEFT) {
+        // Move a câmera para a esquerda (ao longo do vetor perpendicular negativo)
+        cameraPosX -= rightX * moveSpeed;
+        cameraPosY -= rightY * moveSpeed;
+        cameraPosZ -= rightZ * moveSpeed;
+        cameraLookAtX -= rightX * moveSpeed;
+        cameraLookAtY -= rightY * moveSpeed;
+        cameraLookAtZ -= rightZ * moveSpeed;
+    }
+    else if (key == GLUT_KEY_RIGHT) {
+        // Move a câmera para a direita (ao longo do vetor perpendicular)
+        cameraPosX += rightX * moveSpeed;
+        cameraPosY += rightY * moveSpeed;
+        cameraPosZ += rightZ * moveSpeed;
+        cameraLookAtX += rightX * moveSpeed;
+        cameraLookAtY += rightY * moveSpeed;
+        cameraLookAtZ += rightZ * moveSpeed;
+    }
+
+    glutPostRedisplay(); // Redesenha a cena
+}
+
 // --- GLUT Callbacks ---
 // Resize callback.
 void changeSize(int w, int h) {
@@ -309,6 +463,9 @@ int main(int argc, char** argv) {
     glutInitWindowSize(windowWidth, windowHeight);
     glutCreateWindow("CG@DI");
 
+    glutKeyboardFunc(keys); 
+    glutSpecialFunc(specialKeys);
+    
     glutDisplayFunc(renderScene);
     glutReshapeFunc(changeSize);
 
