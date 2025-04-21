@@ -8,6 +8,7 @@
 #include <string>
 #include <cstring>
 #include "../../tinyxml2/tinyxml2.h"
+#include <GL/glew.h>
 #include <GL/glut.h>
 #endif
 
@@ -27,6 +28,7 @@ float cameraFov, cameraNear, cameraFar;
 // TinyXML2 document
 XMLDocument doc;
 
+
 // --- Global Model Data ---
 // Structure to hold model vertices.
 struct Model {
@@ -36,6 +38,8 @@ struct Model {
 
 const int MAX_MODELS = 100;
 Model models[MAX_MODELS];
+
+GLuint buffers[MAX_MODELS];
 
 // --- Scene Graph Structures ---
 // Enumeration for transform types.
@@ -211,25 +215,30 @@ void importVertices(int modelIndex, const char* filepath) {
         models[modelIndex].vertices[count_points++] = y;
         models[modelIndex].vertices[count_points++] = z;
     }
+
+    GLuint vbo;
+    glGenBuffers(1, &vbo);
+    buffers[modelIndex] = vbo; // salva o VBO para o modelo
+
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, models[modelIndex].vertices.size() * sizeof(float), models[modelIndex].vertices.data(), GL_STATIC_DRAW);
+
     file.close();
 }
 
 // Render a model given its index.
 void renderModel(int modelIndex) {
-    // Ensure the model index is valid.
     Model& m = models[modelIndex];
-    int totalCoords = m.numVertices * 3;
-    // We assume that each triangle is composed of 3 vertices (9 floats).
-    // Loop in steps of 9.
-    for (int i = 0; i < totalCoords; i += 9) {
-        glColor3f(1.0f, 1.0f, 1.0f);
-        glBegin(GL_TRIANGLES);
-        glVertex3f(m.vertices[i + 0], m.vertices[i + 1], m.vertices[i + 2]);
-        glVertex3f(m.vertices[i + 3], m.vertices[i + 4], m.vertices[i + 5]);
-        glVertex3f(m.vertices[i + 6], m.vertices[i + 7], m.vertices[i + 8]);
-        glEnd();
-    }
+
+    glBindBuffer(GL_ARRAY_BUFFER, buffers[modelIndex]);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(3, GL_FLOAT, 0, 0);
+
+    glDrawArrays(GL_TRIANGLES, 0, m.numVertices);
+
+    glDisableClientState(GL_VERTEX_ARRAY);
 }
+
 
 // --- Recursive Scene Graph Rendering ---
 // Traverse the scene graph, applying the node's transforms, rendering its models, and then its children.
@@ -446,28 +455,34 @@ void renderScene(void) {
 
 // --- Main Function ---
 int main(int argc, char** argv) {
-    // Load the XML scene (adjust the path as needed).
-    loadXMLData("../../Scene/Scene.xml");
+    loadXMLData("../../Scene/Scene.xml"); // <- aqui dentro está o glGenBuffers
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
+    glutInitWindowPosition(100, 100);
+    glutInitWindowSize(windowWidth, windowHeight);
+    glutCreateWindow("CG@DI-UM");
 
-    // For every unique model file, load the vertices.
+#ifndef __APPLE__
+    GLenum glewError = glewInit();
+    if (glewError != GLEW_OK) {
+        cerr << "Erro ao inicializar GLEW: " << glewGetErrorString(glewError) << endl;
+        return -1;
+    }
+#endif
+
+    // Só depois de GLEW + janela criada:
     for (size_t i = 0; i < modelFiles.size(); i++) {
         char path[128];
         snprintf(path, sizeof(path), "../../modelos/%s", modelFiles[i].c_str());
         importVertices(i, path);
     }
 
-    // Initialize GLUT.
-    glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
-    glutInitWindowPosition(100, 100);
-    glutInitWindowSize(windowWidth, windowHeight);
-    glutCreateWindow("CG@DI");
-
-    glutKeyboardFunc(keys); 
+    glutKeyboardFunc(keys);
     glutSpecialFunc(specialKeys);
-    
+
     glutDisplayFunc(renderScene);
     glutReshapeFunc(changeSize);
+    glutIdleFunc(renderScene);
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);

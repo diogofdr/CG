@@ -4,11 +4,16 @@
 #include <tuple>
 #include <cmath>
 #include <string>
+#include <stdexcept>
+#include <algorithm>    // for std::replace
+#include <sstream>      // for std::istringstream
+#include <limits>       // for std::numeric_limits
+
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
-
+using Vec3 = std::tuple<float, float, float>;
 // Writes a list of (x, y, z) vertices to a file.
 void writeToFile(const std::string& filename,
                  const std::vector<std::tuple<float, float, float>>& vertices) {
@@ -331,6 +336,126 @@ void generateCone(const std::string& filename, float radius, float height,
     writeToFile(filename, vertices);
 }
 
+// Read all control points from a file: groups of 16 (4x4) points per patch
+std::vector<std::vector<Vec3>> loadBezierPatches(const std::string& ctrlFile) {
+    std::ifstream in(ctrlFile);
+    if (!in.is_open())
+        throw std::runtime_error("Cannot open control file " + ctrlFile);
+
+    int numPatches;
+    in >> numPatches;
+    in.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // skip to end‑of‑line
+
+    // Read patch definitions (each line: 16 integers separated by commas)
+    std::vector<std::vector<int>> patchIdx(numPatches, std::vector<int>(16));
+    for (int p = 0; p < numPatches; ++p) {
+        std::string line;
+        std::getline(in, line);
+        std::replace(line.begin(), line.end(), ',', ' ');
+        std::istringstream ss(line);
+        for (int i = 0; i < 16; ++i)
+            ss >> patchIdx[p][i];
+    }
+
+    // Read control‑point count
+    int numPoints;
+    in >> numPoints;
+    in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+    // Read that many x,y,z triples (comma separated)
+    std::vector<Vec3> points(numPoints);
+    for (int i = 0; i < numPoints; ++i) {
+        std::string line;
+        std::getline(in, line);
+        std::replace(line.begin(), line.end(), ',', ' ');
+        std::istringstream ss(line);
+        float x,y,z;
+        ss >> x >> y >> z;
+        points[i] = std::make_tuple(x,y,z);
+    }
+
+    // Build the patches of Vec3
+    std::vector<std::vector<Vec3>> result(numPatches, std::vector<Vec3>(16));
+    for (int p = 0; p < numPatches; ++p) {
+        for (int i = 0; i < 16; ++i) {
+            int idx = patchIdx[p][i];
+            if (idx < 0 || idx >= numPoints)
+                throw std::runtime_error("Patch index out of range");
+            result[p][i] = points[idx];
+        }
+    }
+
+    return result;
+}
+
+// Evaluate the i-th Bernstein polynomial (degree 3) at t
+inline float bernstein(int i, float t) {
+    float u = 1.0f - t;
+    switch (i) {
+        case 0: return u * u * u;
+        case 1: return 3 * t * u * u;
+        case 2: return 3 * t * t * u;
+        case 3: return t * t * t;
+    }
+    return 0.0f;
+}
+
+ //Evaluate a single patch at parameters (u,v)
+Vec3 evalPatch(const std::vector<Vec3>& cp, float u, float v) {
+    float bu[4], bv[4];
+    for (int i = 0; i < 4; ++i) {
+        bu[i] = bernstein(i, u);
+        bv[i] = bernstein(i, v);
+    }
+    float x = 0, y = 0, z = 0;
+    for (int i = 0; i < 4; ++i) {
+        for (int j = 0; j < 4; ++j) {
+            float b = bu[i] * bv[j];
+            auto& p = cp[i*4 + j];
+            x += b * std::get<0>(p);
+            y += b * std::get<1>(p);
+            z += b * std::get<2>(p);
+        }
+    }
+    return std::make_tuple(x, y, z);
+}
+
+void generateBezier(const std::string& filename,
+    const std::string& ctrlFile,
+    int tessellation) {
+    auto patches = loadBezierPatches(ctrlFile);
+    std::vector<Vec3> tris;
+
+    // For each patch:
+    for (const auto& cp : patches) {
+        for (int iu = 0; iu < tessellation; ++iu) {
+            for (int iv = 0; iv < tessellation; ++iv) {
+            float u0 = iu / float(tessellation);
+            float v0 = iv / float(tessellation);
+            float u1 = (iu + 1) / float(tessellation);
+            float v1 = (iv + 1) / float(tessellation);
+
+            Vec3 p00 = evalPatch(cp, u0, v0);
+            Vec3 p10 = evalPatch(cp, u1, v0);
+            Vec3 p11 = evalPatch(cp, u1, v1);
+            Vec3 p01 = evalPatch(cp, u0, v1);
+
+            // Triangle A: p00, p10, p11
+            tris.push_back(p00);
+            tris.push_back(p10);
+            tris.push_back(p11);
+            // Triangle B: p00, p11, p01
+            tris.push_back(p00);
+            tris.push_back(p11);
+            tris.push_back(p01);
+            }
+        }
+}
+
+writeToFile(filename, tris);
+}
+
+
 // MAIN FUNCTION
 // Usage examples (Phase 1):
 //   generator plane <size> <divisions> <output_file>
@@ -340,69 +465,55 @@ void generateCone(const std::string& filename, float radius, float height,
 int main(int argc, char* argv[]) {
     if (argc < 2) {
         std::cout << "Usage:\n"
-                  << "  " << argv[0] << " plane <size> <divisions> <output_file>\n"
-                  << "  " << argv[0] << " box <size> <divisions> <output_file>\n"
-                  << "  " << argv[0] << " sphere <radius> <slices> <stacks> <output_file>\n"
-                  << "  " << argv[0] << " cone <radius> <height> <slices> <stacks> <output_file>\n";
+                  << "  " << argv[0] << " plane <size> <divisions> <output>\n"
+                  << "  " << argv[0] << " box <size> <divisions> <output>\n"
+                  << "  " << argv[0] << " sphere <radius> <slices> <stacks> <output>\n"
+                  << "  " << argv[0] << " cone <radius> <height> <slices> <stacks> <output>\n"
+                  << "  " << argv[0] << " bezier <ctrl_file> <tess> <output>\n";
         return 1;
     }
 
     std::string shape = argv[1];
-
     try {
         if (shape == "plane") {
-            if (argc != 5) {
-                std::cerr << "Error: Wrong number of arguments for plane.\n";
-                return 1;
-            }
             float size = std::stof(argv[2]);
-            int divisions = std::stoi(argv[3]);
-            std::string outFile = argv[4];
-            generatePlane(outFile, size, divisions);
+            int divs  = std::stoi(argv[3]);
+            generatePlane(argv[4], size, divs);
         }
         else if (shape == "box") {
-            if (argc != 5) {
-                std::cerr << "Error: Wrong number of arguments for box.\n";
-                return 1;
-            }
             float size = std::stof(argv[2]);
-            int divisions = std::stoi(argv[3]);
-            std::string outFile = argv[4];
-            generateBox(outFile, size, divisions);
+            int divs  = std::stoi(argv[3]);
+            generateBox(argv[4], size, divs);
         }
         else if (shape == "sphere") {
-            if (argc != 6) {
-                std::cerr << "Error: Wrong number of arguments for sphere.\n";
-                return 1;
-            }
-            float radius = std::stof(argv[2]);
-            int slices = std::stoi(argv[3]);
-            int stacks = std::stoi(argv[4]);
-            std::string outFile = argv[5];
-            generateSphere(outFile, radius, slices, stacks);
+            float r = std::stof(argv[2]);
+            int sl = std::stoi(argv[3]);
+            int st = std::stoi(argv[4]);
+            generateSphere(argv[5], r, sl, st);
         }
         else if (shape == "cone") {
-            if (argc != 7) {
-                std::cerr << "Error: Wrong number of arguments for cone.\n";
-                return 1;
-            }
-            float radius = std::stof(argv[2]);
-            float height = std::stof(argv[3]);
-            int slices = std::stoi(argv[4]);
-            int stacks = std::stoi(argv[5]);
-            std::string outFile = argv[6];
-            generateCone(outFile, radius, height, slices, stacks);
+            float r = std::stof(argv[2]);
+            float h = std::stof(argv[3]);
+            int sl = std::stoi(argv[4]);
+            int st = std::stoi(argv[5]);
+            generateCone(argv[6], r, h, sl, st);
+        }
+        else if (shape == "bezier") {
+            std::string ctrlFile = argv[2];
+            int tess = std::stoi(argv[3]);
+            std::string outFile = argv[4];
+            generateBezier(outFile, ctrlFile, tess);
         }
         else {
-            std::cerr << "Error: Unknown shape '" << shape << "'.\n";
-            return 1;
+            throw std::runtime_error("Unknown shape: " + shape);
         }
     }
     catch (const std::exception& e) {
-        std::cerr << "Error parsing arguments: " << e.what() << std::endl;
+        std::cerr << "Error: " << e.what() << std::endl;
         return 1;
     }
 
-    std::cout << "File generated successfully.\n";
+    std::cout << "File generated successfully." << std::endl;
     return 0;
 }
+
