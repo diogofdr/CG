@@ -57,3 +57,12 @@ cmake-build-*/
 *.lock
 *.lck
 
+# Ignore everything
+*
+
+# But do not ignore directories
+!*/
+
+# Allow these specific files
+!main.c
+!generator.c
