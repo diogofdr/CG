@@ -1,9 +1,68 @@
-# 1) ignore everything
+# Ignore Visual Studio-specific files
+.vscode/
+.vs/
+*.vcxproj.user
+*.vcxproj.filters
+*.suo
+*.user
+*.userossc
+*.sln.docstates
+
+# Ignore build artifacts
+*.obj
+*.o
+*.exe
+*.dll
+*.pdb
+*.ilk
+*.idb
+*.ipdb
+*.iobj
+*.ncb
+*.sdf
+*.tlog
+*.log
+*.lastbuildstate
+*.vcxproj*
+*.aps
+*.pch
+*.manifest
+*.cache
+*.opendb
+*.VC.db
+
+# Ignore generated Debug & Release folders
+Debug/
+Release/
+x64/
+x86/
+ipch/
+
+# Ignore CMake-generated files (if using CMake)
+CMakeLists.txt.user
+CMakeCache.txt
+CMakeFiles/
+cmake-build-*/
+
+# Ignore compiled libraries
+*.lib
+*.a
+*.so
+*.dylib
+*.exp
+*.rsp
+
+# Ignore temporary and lock files
+*.tmp
+*.lock
+*.lck
+
+# Ignore everything
 *
 
-# 2) but don’t ignore directories (so Git can recurse down)
+# But do not ignore directories
 !*/
 
-# 3) and then re‑allow exactly those files, anywhere in the tree:
-!**/main.c
-!**/generator.c
+# Allow these specific files
+!main.c
+!generator.c
