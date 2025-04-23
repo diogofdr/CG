@@ -43,15 +43,16 @@ GLuint buffers[MAX_MODELS];
 
 // --- Scene Graph Structures ---
 // Enumeration for transform types.
-enum TransformType { TRANSLATE, ROTATE, SCALE };
+enum TransformType { TRANSLATE, ROTATE, SCALE, T_TRANSLATE, T_ROTATE };
 
-// Structure to store a transform in the order it is defined.
 struct Transform {
-    TransformType type;
-    // For translate and scale: values[0..2] (x, y, z).
-    // For rotate: values[0] = angle, values[1..3] = axis (x, y, z).
-    float values[4];
+    TransformType   type;
+    float           values[4];      // x y z  |  angle x y z
+    float           time = 0.0f;  // seconds for the animation
+    bool            align = false; // only for Catmull-Rom
+    std::vector<float> points;      // Catmull-Rom control points (x y z …)
 };
+
 
 // Structure for a scene graph group.
 struct Group {
@@ -62,6 +63,82 @@ struct Group {
 
 Group* root = nullptr;              // Root of the scene graph.
 vector<string> modelFiles;          // List of unique model filenames.
+
+
+void normalize(float* v) {
+    float l = sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+    if (l == 0) return;  v[0] /= l; v[1] /= l; v[2] /= l;
+}
+
+void cross(const float* a, const float* b, float* r) {
+    r[0] = a[1] * b[2] - a[2] * b[1];
+    r[1] = a[2] * b[0] - a[0] * b[2];
+    r[2] = a[0] * b[1] - a[1] * b[0];
+}
+
+void multMatrixVector(const float* m, const float* v, float* r) {
+    for (int i = 0;i < 4;i++)
+        r[i] = v[0] * m[i * 4 + 0] + v[1] * m[i * 4 + 1] + v[2] * m[i * 4 + 2] + v[3] * m[i * 4 + 3];
+}
+
+// Catmull-Rom basis
+static const float m[16] = { -0.5f, 1.5f,-1.5f, 0.5f,
+                             1.0f,-2.5f, 2.0f,-0.5f,
+                            -0.5f, 0.0f, 0.5f, 0.0f,
+                             0.0f, 1.0f, 0.0f, 0.0f };
+
+void getCatmullRomPoint(float t, const float* p0, const float* p1, const float* p2, const float* p3,
+    float* pos, float* deriv) {
+    float T[4] = { t * t * t,t * t,t,1 };
+    float Td[4] = { 3 * t * t,2 * t,1,0 };
+
+    float P[3][4];
+    for (int i = 0;i < 3;i++) {
+        float ctrl[4] = { p0[i],p1[i],p2[i],p3[i] };
+        multMatrixVector(m, ctrl, P[i]);
+    }
+
+    for (int i = 0;i < 3;i++) {
+        pos[i] = T[0] * P[i][0] + T[1] * P[i][1] + T[2] * P[i][2] + T[3] * P[i][3];
+        deriv[i] = Td[0] * P[i][0] + Td[1] * P[i][1] + Td[2] * P[i][2] + Td[3] * P[i][3];
+    }
+}
+
+void getGlobalCatmullRomPoint(float gt, const std::vector<float>& pts,
+    float* pos, float* deriv) {
+    int pointCount = pts.size() / 3;
+    float t = gt * pointCount;          // where on the total curve
+    int index = (int)floor(t) % pointCount;
+    t = t - floor(t);                   // local segment t
+
+    int indices[4];
+    indices[0] = (index + pointCount - 1) % pointCount;
+    indices[1] = index;
+    indices[2] = (index + 1) % pointCount;
+    indices[3] = (index + 2) % pointCount;
+
+    const float* p0 = &pts[indices[0] * 3],
+        * p1 = &pts[indices[1] * 3],
+        * p2 = &pts[indices[2] * 3],
+        * p3 = &pts[indices[3] * 3];
+
+    getCatmullRomPoint(t, p0, p1, p2, p3, pos, deriv);
+}
+
+void buildRotMatrixFromDeriv(const float* deriv, float* m) {
+    float Z[3] = { deriv[0],deriv[1],deriv[2] };
+    normalize(Z);
+    float Y[3] = { 0,1,0 };
+    float X[3];
+    cross(Z, Y, X); normalize(X);
+    cross(X, Z, Y); normalize(Y);
+
+    m[0] = X[0]; m[4] = X[1]; m[8] = X[2]; m[12] = 0;
+    m[1] = Y[0]; m[5] = Y[1]; m[9] = Y[2]; m[13] = 0;
+    m[2] = Z[0]; m[6] = Z[1]; m[10] = Z[2]; m[14] = 0;
+    m[3] = 0;    m[7] = 0;    m[11] = 0;    m[15] = 1;
+}
+
 
 // --- XML Parsing Functions ---
 // Recursively parse a <group> element.
@@ -74,18 +151,43 @@ Group* parseGroup(XMLElement* groupElem) {
         for (XMLElement* t = transformElem->FirstChildElement(); t != nullptr; t = t->NextSiblingElement()) {
             string tName = t->Name();
             Transform tr;
+            memset(tr.values, 0, sizeof(tr.values));    // keep it clean
+
             if (tName == "translate") {
-                tr.type = TRANSLATE;
-                t->QueryFloatAttribute("x", &tr.values[0]);
-                t->QueryFloatAttribute("y", &tr.values[1]);
-                t->QueryFloatAttribute("z", &tr.values[2]);
+                if (t->Attribute("time")) {                       // animated
+                    tr.type = T_TRANSLATE;
+                    t->QueryFloatAttribute("time", &tr.time);
+                    tr.align = t->BoolAttribute("align");
+                    for (XMLElement* p = t->FirstChildElement("point"); p; p = p->NextSiblingElement("point")) {
+                        float x, y, z;
+                        p->QueryFloatAttribute("x", &x);
+                        p->QueryFloatAttribute("y", &y);
+                        p->QueryFloatAttribute("z", &z);
+                        tr.points.insert(tr.points.end(), { x, y, z });
+                    }
+                }
+                else {                                            // static
+                    tr.type = TRANSLATE;
+                    t->QueryFloatAttribute("x", &tr.values[0]);
+                    t->QueryFloatAttribute("y", &tr.values[1]);
+                    t->QueryFloatAttribute("z", &tr.values[2]);
+                }
             }
             else if (tName == "rotate") {
-                tr.type = ROTATE;
-                t->QueryFloatAttribute("angle", &tr.values[0]);
-                t->QueryFloatAttribute("x", &tr.values[1]);
-                t->QueryFloatAttribute("y", &tr.values[2]);
-                t->QueryFloatAttribute("z", &tr.values[3]);
+                if (t->Attribute("time")) {                       // animated
+                    tr.type = T_ROTATE;
+                    t->QueryFloatAttribute("time", &tr.time);
+                    t->QueryFloatAttribute("x", &tr.values[1]);
+                    t->QueryFloatAttribute("y", &tr.values[2]);
+                    t->QueryFloatAttribute("z", &tr.values[3]);
+                }
+                else {                                            // static
+                    tr.type = ROTATE;
+                    t->QueryFloatAttribute("angle", &tr.values[0]);
+                    t->QueryFloatAttribute("x", &tr.values[1]);
+                    t->QueryFloatAttribute("y", &tr.values[2]);
+                    t->QueryFloatAttribute("z", &tr.values[3]);
+                }
             }
             else if (tName == "scale") {
                 tr.type = SCALE;
@@ -93,7 +195,9 @@ Group* parseGroup(XMLElement* groupElem) {
                 t->QueryFloatAttribute("y", &tr.values[1]);
                 t->QueryFloatAttribute("z", &tr.values[2]);
             }
+
             group->transforms.push_back(tr);
+
         }
     }
 
@@ -247,16 +351,38 @@ void renderGroup(Group* group) {
 
     // Apply transforms in the order they were parsed.
     for (auto& tr : group->transforms) {
-        if (tr.type == TRANSLATE) {
+        switch (tr.type) {
+        case TRANSLATE:
             glTranslatef(tr.values[0], tr.values[1], tr.values[2]);
-        }
-        else if (tr.type == ROTATE) {
+            break;
+        case ROTATE:
             glRotatef(tr.values[0], tr.values[1], tr.values[2], tr.values[3]);
-        }
-        else if (tr.type == SCALE) {
+            break;
+        case SCALE:
             glScalef(tr.values[0], tr.values[1], tr.values[2]);
+            break;
+        case T_TRANSLATE: {
+            float elapsed = glutGet(GLUT_ELAPSED_TIME) / 1000.0f; // seconds
+            float gt = fmod(elapsed, tr.time) / tr.time;
+            float pos[3], deriv[3];
+            getGlobalCatmullRomPoint(gt, tr.points, pos, deriv);
+            glTranslatef(pos[0], pos[1], pos[2]);
+            if (tr.align) {
+                float m[16];
+                buildRotMatrixFromDeriv(deriv, m);
+                glMultMatrixf(m);
+            }
+            break;
+        }
+        case T_ROTATE: {
+            float elapsed = glutGet(GLUT_ELAPSED_TIME) / 1000.0f;
+            float angle = fmod(elapsed, tr.time) / tr.time * 360.0f;
+            glRotatef(angle, tr.values[1], tr.values[2], tr.values[3]);
+            break;
+        }
         }
     }
+
 
     // Render all models attached to this group.
     for (auto modelIndex : group->modelIndices) {
