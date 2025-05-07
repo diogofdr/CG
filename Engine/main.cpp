@@ -39,6 +39,7 @@
 #include <string>
 #include <vector>
 #include "../../tinyxml2/tinyxml2.h"
+#include <IL/il.h>
 
 using namespace std;
 using namespace tinyxml2;
@@ -65,12 +66,20 @@ XMLDocument g_doc;   // lifetime = entire program
 struct Model {
     int           vertexCount = 0;       // number of vertices (triangle vertices, not faces)
     vector<float> vertices;              // tightly-packed xyz
-    GLuint        vbo = 0;       // OpenGL buffer object id
+    GLuint        vbo = 0;               // OpenGL buffer object id
+    int           normalCount = 0;       // number of normals
+    vector<float> normals;               // tightly-packed xyz
+    GLuint        nom = 0;               // OpenGL buffer object id
+    int           textCount = 0;         // number of UV (points on texture)
+    vector<float> texCoord;              // tightly-packed xy
+    GLuint        tex = 2;               // OpenGL buffer object id
+    GLuint texId = 0;
 };
 
 constexpr int kMaxModels = 128;          // raise if your scene explodes
 vector<Model>       g_models;            // dynamic to track real usage
 vector<string>      g_modelFiles;        // unique model filenames, index matches g_models
+vector<string>      g_textureFiles;      // unique texture filenames, index matches g_models
 
 // -------------------------------------------------------------------------
 // 4.  SCENE GRAPH NODES & TRANSFORMS
@@ -323,7 +332,45 @@ static void loadXML(const char* filename) {
 // -------------------------------------------------------------------------
 // 7.  MODEL LOADING (simple text dump: first int = vertex count, then xyz...) 
 // -------------------------------------------------------------------------
-static void loadModelVertices(int modelIndex, const char* path) {
+
+int loadTexture(std::string s) {
+    unsigned int t, tw, th;
+    unsigned char* texData;
+    unsigned int texID;
+
+    ilInit();
+    ilEnable(IL_ORIGIN_SET);
+    ilOriginFunc(IL_ORIGIN_LOWER_LEFT);
+    ilGenImages(1, &t);
+    ilBindImage(t);
+    ilLoadImage((ILstring)s.c_str());
+    if (!ilLoadImage((ILstring)s.c_str())) {
+        return 0;
+    }
+
+    tw = ilGetInteger(IL_IMAGE_WIDTH);
+    th = ilGetInteger(IL_IMAGE_HEIGHT);
+    ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE);
+    texData = ilGetData();
+
+    glGenTextures(1, &texID);
+
+    glBindTexture(GL_TEXTURE_2D, texID);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, tw, th, 0, GL_RGBA, GL_UNSIGNED_BYTE, texData);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    return texID;
+
+}
+static void loadModelVertices(int modelIndex, const char* path, const char* patht) {
     if (modelIndex >= kMaxModels) {
         cerr << "[WARN] Model index overflow – raise kMaxModels" << '\n';
         return;
@@ -335,29 +382,99 @@ static void loadModelVertices(int modelIndex, const char* path) {
         return;
     }
 
+    GLuint texId = loadTexture(patht);
+    if (texId == 0) {
+        std::cerr << "Failed to load texture!\n";
+    }
+    else {
+        g_models[modelIndex].texId = texId;
+    }
+
     int n = 0;
     file >> n;
-    g_models[modelIndex].vertexCount = n;
-    g_models[modelIndex].vertices.resize(n * 3);
+    if (n <= 0) {
+        cerr << "[ERROR] Invalid vertex count in: " << path << '\n';
+        return;
+    }
 
-    for (int i = 0; i < n * 3; ++i) file >> g_models[modelIndex].vertices[i];
+    auto& model = g_models[modelIndex];
+    model.vertexCount = n;
+    model.textCount = n;
+    model.vertices.resize(n * 3);
+    model.normals.resize(n * 3);
+    model.texCoord.resize(n * 2);
 
-    glGenBuffers(1, &g_models[modelIndex].vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, g_models[modelIndex].vbo);
-    glBufferData(GL_ARRAY_BUFFER,
-        g_models[modelIndex].vertices.size() * sizeof(float),
-        g_models[modelIndex].vertices.data(),
-        GL_STATIC_DRAW);
+    for (int i = 0; i < n * 3; ++i) file >> model.vertices[i];
+
+    for (int i = 0; i < n; ++i) {
+        float x = model.vertices[i * 3 + 0];
+        float y = model.vertices[i * 3 + 1];
+        float z = model.vertices[i * 3 + 2];
+        float len = sqrtf(x * x + y * y + z * z);
+
+        if (len > 0.0001f) {
+            x /= len; y /= len; z /= len;
+        }
+
+        model.normals[i * 3 + 0] = x;
+        model.normals[i * 3 + 1] = y;
+        model.normals[i * 3 + 2] = z;
+
+        model.texCoord[i * 2 + 0] = 0.5f + atan2f(z, x) / (2.0f * M_PI);
+        model.texCoord[i * 2 + 1] = 0.5f + asinf(y) / M_PI;
+    }
+
+    // VBOs
+    glGenBuffers(1, &model.vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, model.vbo);
+    glBufferData(GL_ARRAY_BUFFER, model.vertices.size() * sizeof(float), model.vertices.data(), GL_STATIC_DRAW);
+
+    glGenBuffers(1, &model.nom);
+    glBindBuffer(GL_ARRAY_BUFFER, model.nom);
+    glBufferData(GL_ARRAY_BUFFER, model.normals.size() * sizeof(float), model.normals.data(), GL_STATIC_DRAW);
+
+    glGenBuffers(1, &model.tex);
+    glBindBuffer(GL_ARRAY_BUFFER, model.tex);
+    glBufferData(GL_ARRAY_BUFFER, model.texCoord.size() * sizeof(float), model.texCoord.data(), GL_STATIC_DRAW);
 }
 
-static void renderModel(int idx) {
+
+void renderModel(int idx) {
     const Model& m = g_models[idx];
+
+    float white[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+    glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, white);
+
+    if (m.texId != 0) {
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, m.texId);
+    }
+
     glBindBuffer(GL_ARRAY_BUFFER, m.vbo);
     glEnableClientState(GL_VERTEX_ARRAY);
     glVertexPointer(3, GL_FLOAT, 0, nullptr);
+
+    glBindBuffer(GL_ARRAY_BUFFER, m.nom);
+    glEnableClientState(GL_NORMAL_ARRAY);
+    glNormalPointer(GL_FLOAT, 0, nullptr);
+
+    glBindBuffer(GL_ARRAY_BUFFER, m.tex);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    glTexCoordPointer(2, GL_FLOAT, 0, nullptr);
+
     glDrawArrays(GL_TRIANGLES, 0, m.vertexCount);
+
     glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_NORMAL_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    if (m.texId != 0) {
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glDisable(GL_TEXTURE_2D);
+    }
 }
+
+
 
 // -------------------------------------------------------------------------
 // 8.  RENDERING (recursive descent of the scene graph)
@@ -549,9 +666,11 @@ int main(int argc, char** argv) {
 
     // load all model files now that the GL context exists ----------------
     for (size_t i = 0; i < g_modelFiles.size(); ++i) {
-        char path[256] = { 0 };
-        snprintf(path, sizeof(path), "../../modelos/%s", g_modelFiles[i].c_str());
-        loadModelVertices(static_cast<int>(i), path);
+        char pathm[256] = { 0 };
+        char patht[256] = { 0 };
+        snprintf(pathm, sizeof(pathm), "../../modelos/%s", g_modelFiles[i].c_str());
+        snprintf(patht, sizeof(patht), "../../textures/Teste.jpg");
+        loadModelVertices(static_cast<int>(i), pathm, patht);
     }
 
     // register GLUT callbacks -------------------------------------------
@@ -564,7 +683,12 @@ int main(int argc, char** argv) {
     // basic GL state -----------------------------------------------------
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
-    glPolygonMode(GL_FRONT, GL_LINE); // wireframe for debug – switch to GL_FILL for final renders
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
+    glEnable(GL_NORMALIZE); // caso você use glScalef ou objetos não uniformes
+
+    //glPolygonMode(GL_FRONT, GL_LINE); // wireframe for debug – switch to GL_FILL for final renders
     glClearColor(0.f, 0.f, 0.f, 0.f);
 
     glutMainLoop();

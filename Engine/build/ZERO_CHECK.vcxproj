@@ -69,7 +69,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Midl>
-      <AdditionalIncludeDirectories>E:\Univ5\CG\trabalho\CG\Engine\toolkits\glut;E:\Univ5\CG\trabalho\CG\Engine\toolkits\glew;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\Univ5\CG\trabalho\CG\Engine\toolkits\glut;E:\Univ5\CG\trabalho\CG\Engine\toolkits\glew;E:\Univ5\CG\trabalho\CG\Engine\toolkits\devil;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -79,7 +79,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Midl>
-      <AdditionalIncludeDirectories>E:\Univ5\CG\trabalho\CG\Engine\toolkits\glut;E:\Univ5\CG\trabalho\CG\Engine\toolkits\glew;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\Univ5\CG\trabalho\CG\Engine\toolkits\glut;E:\Univ5\CG\trabalho\CG\Engine\toolkits\glew;E:\Univ5\CG\trabalho\CG\Engine\toolkits\devil;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -89,7 +89,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">
     <Midl>
-      <AdditionalIncludeDirectories>E:\Univ5\CG\trabalho\CG\Engine\toolkits\glut;E:\Univ5\CG\trabalho\CG\Engine\toolkits\glew;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\Univ5\CG\trabalho\CG\Engine\toolkits\glut;E:\Univ5\CG\trabalho\CG\Engine\toolkits\glew;E:\Univ5\CG\trabalho\CG\Engine\toolkits\devil;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -99,7 +99,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">
     <Midl>
-      <AdditionalIncludeDirectories>E:\Univ5\CG\trabalho\CG\Engine\toolkits\glut;E:\Univ5\CG\trabalho\CG\Engine\toolkits\glew;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\Univ5\CG\trabalho\CG\Engine\toolkits\glut;E:\Univ5\CG\trabalho\CG\Engine\toolkits\glew;E:\Univ5\CG\trabalho\CG\Engine\toolkits\devil;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
