@@ -60,20 +60,35 @@ float g_camFar = 500.f;
 
 XMLDocument g_doc;   // lifetime = entire program
 
+
+struct Light {
+    int id;
+    bool isDirectional;
+    float pos[4];    // xyz,w
+    float diffuse[4];
+    float specular[4];
+    float ambient[4];
+};
+vector<Light> g_lights;
+
+
 // -------------------------------------------------------------------------
 // 3.  GPU MODEL STORAGE (VBOs only – no client-side arrays at draw time)
 // -------------------------------------------------------------------------
+struct Material {
+    float diffuse[4]{ 0.8f,0.8f,0.8f,1.f };
+    float ambient[4]{ 0.2f,0.2f,0.2f,1.f };
+    float specular[4]{ 0.f,0.f,0.f,1.f };
+    float emissive[4]{ 0.f,0.f,0.f,1.f };
+    float shininess = 0.f;
+};
+
 struct Model {
-    int           vertexCount = 0;       // number of vertices (triangle vertices, not faces)
-    vector<float> vertices;              // tightly-packed xyz
-    GLuint        vbo = 0;               // OpenGL buffer object id
-    int           normalCount = 0;       // number of normals
-    vector<float> normals;               // tightly-packed xyz
-    GLuint        nom = 0;               // OpenGL buffer object id
-    int           textCount = 0;         // number of UV (points on texture)
-    vector<float> texCoord;              // tightly-packed xy
-    GLuint        tex = 2;               // OpenGL buffer object id
-    GLuint texId = 0;
+    int vertexCount = 0;
+    GLuint vbo = 0;
+    GLuint texId = 0;          // OpenGL texture object
+    std::string texFile;          // path read from XML
+    Material mat;                 // per-model material
 };
 
 constexpr int kMaxModels = 128;          // raise if your scene explodes
@@ -196,18 +211,22 @@ namespace math {
 // -------------------------------------------------------------------------
 // 6.  XML PARSING → SCENE GRAPH (recursive descent)
 // -------------------------------------------------------------------------
-static unique_ptr<Group> parseGroup(XMLElement* gElem) {
+// -------------------------------------------------------------------------
+// 6.  XML PARSING → SCENE GRAPH (recursive descent)
+// -------------------------------------------------------------------------
+static unique_ptr<Group> parseGroup(XMLElement* gElem)
+{
     auto group = make_unique<Group>();
 
-    // -------- transforms ------------------------------------------------
-    if (auto* tElem = gElem->FirstChildElement("transform")) {
-        for (auto* t = tElem->FirstChildElement(); t; t = t->NextSiblingElement()) {
+    // ---------- 1.  transforms ------------------------------------------
+    if (auto* tElem = gElem->FirstChildElement("transform"))
+        for (auto* t = tElem->FirstChildElement(); t; t = t->NextSiblingElement())
+        {
             string tag = t->Name();
-            Transform tr{};  // zero-init
+            Transform tr{};                          // zero-init
 
-            // TRANSLATE ---------------------------------------------------
             if (tag == "translate") {
-                if (t->Attribute("time")) {    // timed path
+                if (t->Attribute("time")) {          // animated
                     tr.type = TransformType::TranslateTimed;
                     t->QueryFloatAttribute("time", &tr.duration);
                     tr.align = t->BoolAttribute("align");
@@ -216,17 +235,16 @@ static unique_ptr<Group> parseGroup(XMLElement* gElem) {
                         p->QueryFloatAttribute("x", &x);
                         p->QueryFloatAttribute("y", &y);
                         p->QueryFloatAttribute("z", &z);
-                        tr.control.insert(tr.control.end(), { x, y, z });
+                        tr.control.insert(tr.control.end(), { x,y,z });
                     }
                 }
-                else {                       // static translate
+                else {                             // static
                     tr.type = TransformType::TranslateStatic;
                     t->QueryFloatAttribute("x", &tr.data[0]);
                     t->QueryFloatAttribute("y", &tr.data[1]);
                     t->QueryFloatAttribute("z", &tr.data[2]);
                 }
             }
-            // ROTATE ------------------------------------------------------
             else if (tag == "rotate") {
                 if (t->Attribute("time")) {
                     tr.type = TransformType::RotateTimed;
@@ -243,7 +261,6 @@ static unique_ptr<Group> parseGroup(XMLElement* gElem) {
                     t->QueryFloatAttribute("z", &tr.data[3]);
                 }
             }
-            // SCALE -------------------------------------------------------
             else if (tag == "scale") {
                 tr.type = TransformType::ScaleStatic;
                 t->QueryFloatAttribute("x", &tr.data[0]);
@@ -253,30 +270,53 @@ static unique_ptr<Group> parseGroup(XMLElement* gElem) {
 
             group->transforms.push_back(std::move(tr));
         }
-    }
 
-    // -------- models ----------------------------------------------------
-    if (auto* modelsElem = gElem->FirstChildElement("models")) {
-        for (auto* m = modelsElem->FirstChildElement("model"); m; m = m->NextSiblingElement("model")) {
+    // ---------- 2.  models ---------------------------------------------
+    if (auto* modelsElem = gElem->FirstChildElement("models"))
+        for (auto* m = modelsElem->FirstChildElement("model"); m; m = m->NextSiblingElement("model"))
+        {
             const char* file = m->Attribute("file");
             if (!file) continue;
 
-            // reuse VBO if already loaded
-            auto it = find(g_modelFiles.begin(), g_modelFiles.end(), file);
-            int idx = 0;
-            if (it == g_modelFiles.end()) {
-                idx = static_cast<int>(g_modelFiles.size());
-                g_modelFiles.push_back(file);
-                g_models.emplace_back();            // allocate slot
-            }
-            else {
-                idx = static_cast<int>(distance(g_modelFiles.begin(), it));
-            }
+            // make a fresh Model for each <model> tag so it carries its own texture
+            int idx = static_cast<int>(g_modelFiles.size());
+            g_modelFiles.push_back(file);
+            g_models.emplace_back();
             group->modelIdx.push_back(idx);
-        }
-    }
 
-    // -------- children --------------------------------------------------
+
+            // ---------- texture -----------------------------------------
+            if (auto* tex = m->FirstChildElement("texture")) {
+                const char* texPath = tex->Attribute("file");
+                if (texPath) g_models[idx].texFile = texPath;
+            }
+
+            // ---------- material ----------------------------------------
+            if (auto* col = m->FirstChildElement("color")) {
+                auto& mat = g_models[idx].mat;
+                auto grab = [&](const char* tag, float* dst) {
+                    if (auto* e = col->FirstChildElement(tag)) {
+                        float r, g, b;
+                        e->QueryFloatAttribute("R", &r);
+                        e->QueryFloatAttribute("G", &g);
+                        e->QueryFloatAttribute("B", &b);
+                        dst[0] = r / 255.f;
+                        dst[1] = g / 255.f;
+                        dst[2] = b / 255.f;
+                        dst[3] = 1.f;
+                    }
+                    };
+
+                grab("diffuse", mat.diffuse);
+                grab("ambient", mat.ambient);
+                grab("specular", mat.specular);
+                grab("emissive", mat.emissive);
+                if (auto* s = col->FirstChildElement("shininess"))
+                    s->QueryFloatAttribute("value", &mat.shininess);
+            }
+        }
+
+    // ---------- 3.  children -------------------------------------------
     for (auto* child = gElem->FirstChildElement("group"); child; child = child->NextSiblingElement("group"))
         group->children.push_back(parseGroup(child));
 
@@ -325,6 +365,43 @@ static void loadXML(const char* filename) {
         }
     }
 
+    if (auto* lightsElem = world->FirstChildElement("lights"))
+        for (auto* l = lightsElem->FirstChildElement("light"); l; l = l->NextSiblingElement("light")) {
+            Light L{};
+            l->QueryIntAttribute("id", &L.id);
+            L.isDirectional = strcmp(l->Attribute("type"), "directional") == 0;
+            if (L.isDirectional) {
+                l->QueryFloatAttribute("dirX", &L.pos[0]);
+                l->QueryFloatAttribute("dirY", &L.pos[1]);
+                l->QueryFloatAttribute("dirZ", &L.pos[2]);
+                L.pos[3] = 0.f;
+            }
+            else {
+                l->QueryFloatAttribute("posX", &L.pos[0]);
+                l->QueryFloatAttribute("posY", &L.pos[1]);
+                l->QueryFloatAttribute("posZ", &L.pos[2]);
+                L.pos[3] = 1.f;
+            }
+            auto grab = [&](const char* tag, float* dst) {
+                if (auto* e = l->FirstChildElement(tag)) {
+                    float r, g, b;
+                    e->QueryFloatAttribute("R", &r);
+                    e->QueryFloatAttribute("G", &g);
+                    e->QueryFloatAttribute("B", &b);
+                    dst[0] = r / 255.f;
+                    dst[1] = g / 255.f;
+                    dst[2] = b / 255.f;
+                    dst[3] = 1.f;
+                }
+                };
+
+            grab("diffuse", L.diffuse);
+            grab("specular", L.specular);
+            grab("ambient", L.ambient);
+            g_lights.push_back(L);
+        }
+
+
     // root group ---------------------------------------------------------
     g_root = parseGroup(world->FirstChildElement("group"));
 }
@@ -370,109 +447,71 @@ int loadTexture(std::string s) {
     return texID;
 
 }
-static void loadModelVertices(int modelIndex, const char* path, const char* patht) {
-    if (modelIndex >= kMaxModels) {
-        cerr << "[WARN] Model index overflow – raise kMaxModels" << '\n';
-        return;
+static void loadModelVertices(int idx, const char* path)
+{
+    std::ifstream f(path);
+    if (!f) { std::cerr << "cannot open " << path << "\n"; return; }
+
+    int n; f >> n;
+    if (n <= 0) { std::cerr << "bad vertex count in " << path << "\n"; return; }
+
+    std::vector<float> inter;
+    inter.reserve(n * 8);
+
+    for (int i = 0;i < n;++i) {
+        float a[8];              // x y z  nx ny nz  u v
+        for (float& v : a) f >> v;
+        inter.insert(inter.end(), a, a + 8);
     }
 
-    ifstream file(path);
-    if (!file) {
-        cerr << "[ERROR] Cannot open model file: " << path << '\n';
-        return;
+    auto& m = g_models[idx];
+    m.vertexCount = n;
+
+    glGenBuffers(1, &m.vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, m.vbo);
+    glBufferData(GL_ARRAY_BUFFER, inter.size() * sizeof(float), inter.data(), GL_STATIC_DRAW);
+
+    // load texture now if a filename was set
+    if (!m.texFile.empty()) {
+        char full[256]; snprintf(full, sizeof(full), "../../textures/%s", m.texFile.c_str());
+        m.texId = loadTexture(full);
+        std::cerr << "Loaded texture '" << full << "' → ID=" << m.texId << "\n";
     }
-
-    GLuint texId = loadTexture(patht);
-    if (texId == 0) {
-        std::cerr << "Failed to load texture!\n";
-    }
-    else {
-        g_models[modelIndex].texId = texId;
-    }
-
-    int n = 0;
-    file >> n;
-    if (n <= 0) {
-        cerr << "[ERROR] Invalid vertex count in: " << path << '\n';
-        return;
-    }
-
-    auto& model = g_models[modelIndex];
-    model.vertexCount = n;
-    model.textCount = n;
-    model.vertices.resize(n * 3);
-    model.normals.resize(n * 3);
-    model.texCoord.resize(n * 2);
-
-    for (int i = 0; i < n * 3; ++i) file >> model.vertices[i];
-
-    for (int i = 0; i < n; ++i) {
-        float x = model.vertices[i * 3 + 0];
-        float y = model.vertices[i * 3 + 1];
-        float z = model.vertices[i * 3 + 2];
-        float len = sqrtf(x * x + y * y + z * z);
-
-        if (len > 0.0001f) {
-            x /= len; y /= len; z /= len;
-        }
-
-        model.normals[i * 3 + 0] = x;
-        model.normals[i * 3 + 1] = y;
-        model.normals[i * 3 + 2] = z;
-
-        model.texCoord[i * 2 + 0] = 0.5f + atan2f(z, x) / (2.0f * M_PI);
-        model.texCoord[i * 2 + 1] = 0.5f + asinf(y) / M_PI;
-    }
-
-    // VBOs
-    glGenBuffers(1, &model.vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, model.vbo);
-    glBufferData(GL_ARRAY_BUFFER, model.vertices.size() * sizeof(float), model.vertices.data(), GL_STATIC_DRAW);
-
-    glGenBuffers(1, &model.nom);
-    glBindBuffer(GL_ARRAY_BUFFER, model.nom);
-    glBufferData(GL_ARRAY_BUFFER, model.normals.size() * sizeof(float), model.normals.data(), GL_STATIC_DRAW);
-
-    glGenBuffers(1, &model.tex);
-    glBindBuffer(GL_ARRAY_BUFFER, model.tex);
-    glBufferData(GL_ARRAY_BUFFER, model.texCoord.size() * sizeof(float), model.texCoord.data(), GL_STATIC_DRAW);
 }
 
+void renderModel(int i) {
+    const Model& m = g_models[i];
 
-void renderModel(int idx) {
-    const Model& m = g_models[idx];
+    // material
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, m.mat.diffuse);
+    glMaterialfv(GL_FRONT, GL_AMBIENT, m.mat.ambient);
+    glMaterialfv(GL_FRONT, GL_SPECULAR, m.mat.specular);
+    glMaterialfv(GL_FRONT, GL_EMISSION, m.mat.emissive);
+    glMaterialf(GL_FRONT, GL_SHININESS, m.mat.shininess);
 
-    float white[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
-    glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, white);
-
-    if (m.texId != 0) {
+    // optional texture
+    if (m.texId) {
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, m.texId);
     }
 
     glBindBuffer(GL_ARRAY_BUFFER, m.vbo);
     glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(3, GL_FLOAT, 0, nullptr);
-
-    glBindBuffer(GL_ARRAY_BUFFER, m.nom);
     glEnableClientState(GL_NORMAL_ARRAY);
-    glNormalPointer(GL_FLOAT, 0, nullptr);
-
-    glBindBuffer(GL_ARRAY_BUFFER, m.tex);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    glTexCoordPointer(2, GL_FLOAT, 0, nullptr);
+
+    glVertexPointer(3, GL_FLOAT, 8 * sizeof(float), (void*)0);
+    glNormalPointer(GL_FLOAT, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+    glTexCoordPointer(2, GL_FLOAT, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 
     glDrawArrays(GL_TRIANGLES, 0, m.vertexCount);
 
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_NORMAL_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-
-    if (m.texId != 0) {
-        glBindTexture(GL_TEXTURE_2D, 0);
-        glDisable(GL_TEXTURE_2D);
-    }
+    glDisableClientState(GL_NORMAL_ARRAY);
+    glDisableClientState(GL_VERTEX_ARRAY);
+    if (m.texId) { glBindTexture(GL_TEXTURE_2D, 0); glDisable(GL_TEXTURE_2D); }
 }
+
 
 
 
@@ -640,6 +679,18 @@ static void display() {
         g_camLook[0], g_camLook[1], g_camLook[2],
         g_camUp[0], g_camUp[1], g_camUp[2]);
 
+
+    for (auto& L : g_lights) {
+        GLenum lightEnum = GL_LIGHT0 + L.id;
+        glEnable(lightEnum);
+        glLightfv(lightEnum, GL_POSITION, L.pos);
+        glLightfv(lightEnum, GL_DIFFUSE, L.diffuse);
+        glLightfv(lightEnum, GL_SPECULAR, L.specular);
+        glLightfv(lightEnum, GL_AMBIENT, L.ambient);
+    }
+
+
+
     if (g_root) renderGroup(g_root.get());
 
     glutSwapBuffers();
@@ -665,13 +716,11 @@ int main(int argc, char** argv) {
 #endif
 
     // load all model files now that the GL context exists ----------------
-    for (size_t i = 0; i < g_modelFiles.size(); ++i) {
-        char pathm[256] = { 0 };
-        char patht[256] = { 0 };
-        snprintf(pathm, sizeof(pathm), "../../modelos/%s", g_modelFiles[i].c_str());
-        snprintf(patht, sizeof(patht), "../../textures/Teste.jpg");
-        loadModelVertices(static_cast<int>(i), pathm, patht);
+    for (size_t i = 0;i < g_modelFiles.size();++i) {
+        char full[256]; snprintf(full, sizeof(full), "../../modelos/%s", g_modelFiles[i].c_str());
+        loadModelVertices((int)i, full);           // texture handled inside
     }
+
 
     // register GLUT callbacks -------------------------------------------
     glutDisplayFunc(display);

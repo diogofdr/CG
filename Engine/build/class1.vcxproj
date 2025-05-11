@@ -22,7 +22,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{E056E7A8-650D-3926-9163-C64570C62484}</ProjectGuid>
+    <ProjectGuid>{47666399-F72F-35E9-A1AE-1D9FFEF8710D}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <WindowsTargetPlatformVersion>10.0.22621.0</WindowsTargetPlatformVersion>
     <Platform>Win32</Platform>
@@ -59,25 +59,25 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">E:\Univ5\CG\trabalho\CG\Engine\build\Debug\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Users\Traff\Documents\Unreal Projects\CG\Engine\build\Debug\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">class1.dir\Debug\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">class1</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.exe</TargetExt>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</GenerateManifest>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">E:\Univ5\CG\trabalho\CG\Engine\build\Release\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Users\Traff\Documents\Unreal Projects\CG\Engine\build\Release\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">class1.dir\Release\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">class1</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.exe</TargetExt>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</GenerateManifest>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">E:\Univ5\CG\trabalho\CG\Engine\build\MinSizeRel\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:\Users\Traff\Documents\Unreal Projects\CG\Engine\build\MinSizeRel\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">class1.dir\MinSizeRel\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">class1</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">.exe</TargetExt>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">false</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">true</GenerateManifest>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">E:\Univ5\CG\trabalho\CG\Engine\build\RelWithDebInfo\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:\Users\Traff\Documents\Unreal Projects\CG\Engine\build\RelWithDebInfo\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">class1.dir\RelWithDebInfo\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">class1</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">.exe</TargetExt>
@@ -86,16 +86,18 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>E:\Univ5\CG\trabalho\CG\Engine\toolkits\glut;E:\Univ5\CG\trabalho\CG\Engine\toolkits\glew;E:\Univ5\CG\trabalho\CG\Engine\toolkits\devil;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Traff\Documents\Unreal Projects\CG\Engine\toolkits\glut;C:\Users\Traff\Documents\Unreal Projects\CG\Engine\toolkits\glew;C:\Users\Traff\Documents\Unreal Projects\CG\Engine\toolkits\devil;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <ExceptionHandling>Sync</ExceptionHandling>
       <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <MinimalRebuild></MinimalRebuild>
       <Optimization>Disabled</Optimization>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
       <UseFullPaths>false</UseFullPaths>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;CMAKE_INTDIR="Debug"</PreprocessorDefinitions>
@@ -104,10 +106,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>E:\Univ5\CG\trabalho\CG\Engine\toolkits\glut;E:\Univ5\CG\trabalho\CG\Engine\toolkits\glew;E:\Univ5\CG\trabalho\CG\Engine\toolkits\devil;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Traff\Documents\Unreal Projects\CG\Engine\toolkits\glut;C:\Users\Traff\Documents\Unreal Projects\CG\Engine\toolkits\glew;C:\Users\Traff\Documents\Unreal Projects\CG\Engine\toolkits\devil;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>E:\Univ5\CG\trabalho\CG\Engine\toolkits\glut;E:\Univ5\CG\trabalho\CG\Engine\toolkits\glew;E:\Univ5\CG\trabalho\CG\Engine\toolkits\devil;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Traff\Documents\Unreal Projects\CG\Engine\toolkits\glut;C:\Users\Traff\Documents\Unreal Projects\CG\Engine\toolkits\glew;C:\Users\Traff\Documents\Unreal Projects\CG\Engine\toolkits\devil;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -115,13 +117,13 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <Link>
-      <AdditionalDependencies>opengl32.lib;glu32.lib;E:\Univ5\CG\trabalho\CG\Engine\toolkits\glut\glut32.lib;E:\Univ5\CG\trabalho\CG\Engine\toolkits\glew\glew32.lib;E:\Univ5\CG\trabalho\CG\Engine\toolkits\devil\DevIL.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glu32.lib;C:\Users\Traff\Documents\Unreal Projects\CG\Engine\toolkits\glut\glut32.lib;C:\Users\Traff\Documents\Unreal Projects\CG\Engine\toolkits\glew\glew32.lib;C:\Users\Traff\Documents\Unreal Projects\CG\Engine\toolkits\devil\DevIL.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>%(AdditionalOptions) /machine:X86</AdditionalOptions>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <ImportLibrary>E:/Univ5/CG/trabalho/CG/Engine/build/Debug/class1.lib</ImportLibrary>
-      <ProgramDataBaseFile>E:/Univ5/CG/trabalho/CG/Engine/build/Debug/class1.pdb</ProgramDataBaseFile>
+      <ImportLibrary>C:/Users/Traff/Documents/Unreal Projects/CG/Engine/build/Debug/class1.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/Users/Traff/Documents/Unreal Projects/CG/Engine/build/Debug/class1.pdb</ProgramDataBaseFile>
       <SubSystem>Console</SubSystem>
     </Link>
     <ProjectReference>
@@ -130,14 +132,17 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>E:\Univ5\CG\trabalho\CG\Engine\toolkits\glut;E:\Univ5\CG\trabalho\CG\Engine\toolkits\glew;E:\Univ5\CG\trabalho\CG\Engine\toolkits\devil;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Traff\Documents\Unreal Projects\CG\Engine\toolkits\glut;C:\Users\Traff\Documents\Unreal Projects\CG\Engine\toolkits\glew;C:\Users\Traff\Documents\Unreal Projects\CG\Engine\toolkits\devil;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <ExceptionHandling>Sync</ExceptionHandling>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <MinimalRebuild></MinimalRebuild>
       <Optimization>MaxSpeed</Optimization>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
       <UseFullPaths>false</UseFullPaths>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR="Release"</PreprocessorDefinitions>
@@ -148,10 +153,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>E:\Univ5\CG\trabalho\CG\Engine\toolkits\glut;E:\Univ5\CG\trabalho\CG\Engine\toolkits\glew;E:\Univ5\CG\trabalho\CG\Engine\toolkits\devil;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Traff\Documents\Unreal Projects\CG\Engine\toolkits\glut;C:\Users\Traff\Documents\Unreal Projects\CG\Engine\toolkits\glew;C:\Users\Traff\Documents\Unreal Projects\CG\Engine\toolkits\devil;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>E:\Univ5\CG\trabalho\CG\Engine\toolkits\glut;E:\Univ5\CG\trabalho\CG\Engine\toolkits\glew;E:\Univ5\CG\trabalho\CG\Engine\toolkits\devil;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Traff\Documents\Unreal Projects\CG\Engine\toolkits\glut;C:\Users\Traff\Documents\Unreal Projects\CG\Engine\toolkits\glew;C:\Users\Traff\Documents\Unreal Projects\CG\Engine\toolkits\devil;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -159,13 +164,13 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <Link>
-      <AdditionalDependencies>opengl32.lib;glu32.lib;E:\Univ5\CG\trabalho\CG\Engine\toolkits\glut\glut32.lib;E:\Univ5\CG\trabalho\CG\Engine\toolkits\glew\glew32.lib;E:\Univ5\CG\trabalho\CG\Engine\toolkits\devil\DevIL.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glu32.lib;C:\Users\Traff\Documents\Unreal Projects\CG\Engine\toolkits\glut\glut32.lib;C:\Users\Traff\Documents\Unreal Projects\CG\Engine\toolkits\glew\glew32.lib;C:\Users\Traff\Documents\Unreal Projects\CG\Engine\toolkits\devil\DevIL.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>%(AdditionalOptions) /machine:X86</AdditionalOptions>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <ImportLibrary>E:/Univ5/CG/trabalho/CG/Engine/build/Release/class1.lib</ImportLibrary>
-      <ProgramDataBaseFile>E:/Univ5/CG/trabalho/CG/Engine/build/Release/class1.pdb</ProgramDataBaseFile>
+      <ImportLibrary>C:/Users/Traff/Documents/Unreal Projects/CG/Engine/build/Release/class1.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/Users/Traff/Documents/Unreal Projects/CG/Engine/build/Release/class1.pdb</ProgramDataBaseFile>
       <SubSystem>Console</SubSystem>
     </Link>
     <ProjectReference>
@@ -174,14 +179,17 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>E:\Univ5\CG\trabalho\CG\Engine\toolkits\glut;E:\Univ5\CG\trabalho\CG\Engine\toolkits\glew;E:\Univ5\CG\trabalho\CG\Engine\toolkits\devil;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Traff\Documents\Unreal Projects\CG\Engine\toolkits\glut;C:\Users\Traff\Documents\Unreal Projects\CG\Engine\toolkits\glew;C:\Users\Traff\Documents\Unreal Projects\CG\Engine\toolkits\devil;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <ExceptionHandling>Sync</ExceptionHandling>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <MinimalRebuild></MinimalRebuild>
       <Optimization>MinSpace</Optimization>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
       <UseFullPaths>false</UseFullPaths>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR="MinSizeRel"</PreprocessorDefinitions>
@@ -192,10 +200,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>E:\Univ5\CG\trabalho\CG\Engine\toolkits\glut;E:\Univ5\CG\trabalho\CG\Engine\toolkits\glew;E:\Univ5\CG\trabalho\CG\Engine\toolkits\devil;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Traff\Documents\Unreal Projects\CG\Engine\toolkits\glut;C:\Users\Traff\Documents\Unreal Projects\CG\Engine\toolkits\glew;C:\Users\Traff\Documents\Unreal Projects\CG\Engine\toolkits\devil;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>E:\Univ5\CG\trabalho\CG\Engine\toolkits\glut;E:\Univ5\CG\trabalho\CG\Engine\toolkits\glew;E:\Univ5\CG\trabalho\CG\Engine\toolkits\devil;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Traff\Documents\Unreal Projects\CG\Engine\toolkits\glut;C:\Users\Traff\Documents\Unreal Projects\CG\Engine\toolkits\glew;C:\Users\Traff\Documents\Unreal Projects\CG\Engine\toolkits\devil;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -203,13 +211,13 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <Link>
-      <AdditionalDependencies>opengl32.lib;glu32.lib;E:\Univ5\CG\trabalho\CG\Engine\toolkits\glut\glut32.lib;E:\Univ5\CG\trabalho\CG\Engine\toolkits\glew\glew32.lib;E:\Univ5\CG\trabalho\CG\Engine\toolkits\devil\DevIL.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glu32.lib;C:\Users\Traff\Documents\Unreal Projects\CG\Engine\toolkits\glut\glut32.lib;C:\Users\Traff\Documents\Unreal Projects\CG\Engine\toolkits\glew\glew32.lib;C:\Users\Traff\Documents\Unreal Projects\CG\Engine\toolkits\devil\DevIL.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>%(AdditionalOptions) /machine:X86</AdditionalOptions>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <ImportLibrary>E:/Univ5/CG/trabalho/CG/Engine/build/MinSizeRel/class1.lib</ImportLibrary>
-      <ProgramDataBaseFile>E:/Univ5/CG/trabalho/CG/Engine/build/MinSizeRel/class1.pdb</ProgramDataBaseFile>
+      <ImportLibrary>C:/Users/Traff/Documents/Unreal Projects/CG/Engine/build/MinSizeRel/class1.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/Users/Traff/Documents/Unreal Projects/CG/Engine/build/MinSizeRel/class1.pdb</ProgramDataBaseFile>
       <SubSystem>Console</SubSystem>
     </Link>
     <ProjectReference>
@@ -218,15 +226,18 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>E:\Univ5\CG\trabalho\CG\Engine\toolkits\glut;E:\Univ5\CG\trabalho\CG\Engine\toolkits\glew;E:\Univ5\CG\trabalho\CG\Engine\toolkits\devil;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Traff\Documents\Unreal Projects\CG\Engine\toolkits\glut;C:\Users\Traff\Documents\Unreal Projects\CG\Engine\toolkits\glew;C:\Users\Traff\Documents\Unreal Projects\CG\Engine\toolkits\devil;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <ExceptionHandling>Sync</ExceptionHandling>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <MinimalRebuild></MinimalRebuild>
       <Optimization>MaxSpeed</Optimization>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SupportJustMyCode></SupportJustMyCode>
       <UseFullPaths>false</UseFullPaths>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR="RelWithDebInfo"</PreprocessorDefinitions>
@@ -235,10 +246,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>E:\Univ5\CG\trabalho\CG\Engine\toolkits\glut;E:\Univ5\CG\trabalho\CG\Engine\toolkits\glew;E:\Univ5\CG\trabalho\CG\Engine\toolkits\devil;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Traff\Documents\Unreal Projects\CG\Engine\toolkits\glut;C:\Users\Traff\Documents\Unreal Projects\CG\Engine\toolkits\glew;C:\Users\Traff\Documents\Unreal Projects\CG\Engine\toolkits\devil;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>E:\Univ5\CG\trabalho\CG\Engine\toolkits\glut;E:\Univ5\CG\trabalho\CG\Engine\toolkits\glew;E:\Univ5\CG\trabalho\CG\Engine\toolkits\devil;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Traff\Documents\Unreal Projects\CG\Engine\toolkits\glut;C:\Users\Traff\Documents\Unreal Projects\CG\Engine\toolkits\glew;C:\Users\Traff\Documents\Unreal Projects\CG\Engine\toolkits\devil;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -246,13 +257,13 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <Link>
-      <AdditionalDependencies>opengl32.lib;glu32.lib;E:\Univ5\CG\trabalho\CG\Engine\toolkits\glut\glut32.lib;E:\Univ5\CG\trabalho\CG\Engine\toolkits\glew\glew32.lib;E:\Univ5\CG\trabalho\CG\Engine\toolkits\devil\DevIL.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glu32.lib;C:\Users\Traff\Documents\Unreal Projects\CG\Engine\toolkits\glut\glut32.lib;C:\Users\Traff\Documents\Unreal Projects\CG\Engine\toolkits\glew\glew32.lib;C:\Users\Traff\Documents\Unreal Projects\CG\Engine\toolkits\devil\DevIL.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>%(AdditionalOptions) /machine:X86</AdditionalOptions>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <ImportLibrary>E:/Univ5/CG/trabalho/CG/Engine/build/RelWithDebInfo/class1.lib</ImportLibrary>
-      <ProgramDataBaseFile>E:/Univ5/CG/trabalho/CG/Engine/build/RelWithDebInfo/class1.pdb</ProgramDataBaseFile>
+      <ImportLibrary>C:/Users/Traff/Documents/Unreal Projects/CG/Engine/build/RelWithDebInfo/class1.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/Users/Traff/Documents/Unreal Projects/CG/Engine/build/RelWithDebInfo/class1.pdb</ProgramDataBaseFile>
       <SubSystem>Console</SubSystem>
     </Link>
     <ProjectReference>
@@ -260,11 +271,11 @@
     </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <CustomBuild Include="E:\Univ5\CG\trabalho\CG\Engine\CMakeLists.txt">
+    <CustomBuild Include="C:\Users\Traff\Documents\Unreal Projects\CG\Engine\CMakeLists.txt">
       <UseUtf8Encoding>Always</UseUtf8Encoding>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Building Custom Rule E:/Univ5/CG/trabalho/CG/Engine/CMakeLists.txt</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Building Custom Rule C:/Users/Traff/Documents/Unreal Projects/CG/Engine/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">setlocal
-E:\Univ4\CMake\bin\cmake.exe -SE:/Univ5/CG/trabalho/CG/Engine -BE:/Univ5/CG/trabalho/CG/Engine/build --check-stamp-file E:/Univ5/CG/trabalho/CG/Engine/build/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" "-SC:/Users/Traff/Documents/Unreal Projects/CG/Engine" "-BC:/Users/Traff/Documents/Unreal Projects/CG/Engine/build" --check-stamp-file "C:/Users/Traff/Documents/Unreal Projects/CG/Engine/build/CMakeFiles/generate.stamp"
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -272,12 +283,12 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">E:\Univ4\CMake\share\cmake-3.28\Modules\CMakeCInformation.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\CMakeCXXInformation.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\CMakeCommonLanguageInclude.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\CMakeGenericSystem.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\CMakeInitializeConfigs.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\CMakeLanguageInformation.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\CMakeRCInformation.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\CMakeSystemSpecificInformation.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\CMakeSystemSpecificInitialize.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\Compiler\CMakeCommonCompilerMacros.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\Compiler\MSVC-C.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\Compiler\MSVC-CXX.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\Compiler\MSVC.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\FindOpenGL.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\FindPackageHandleStandardArgs.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\FindPackageMessage.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\Platform\Windows-Initialize.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\Platform\Windows-MSVC-C.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\Platform\Windows-MSVC-CXX.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\Platform\Windows-MSVC.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\Platform\Windows.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\Platform\WindowsPaths.cmake;E:\Univ5\CG\trabalho\CG\Engine\build\CMakeFiles\3.28.3\CMakeCCompiler.cmake;E:\Univ5\CG\trabalho\CG\Engine\build\CMakeFiles\3.28.3\CMakeCXXCompiler.cmake;E:\Univ5\CG\trabalho\CG\Engine\build\CMakeFiles\3.28.3\CMakeRCCompiler.cmake;E:\Univ5\CG\trabalho\CG\Engine\build\CMakeFiles\3.28.3\CMakeSystem.cmake;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">E:\Univ5\CG\trabalho\CG\Engine\build\CMakeFiles\generate.stamp</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeInitializeConfigs.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Compiler\MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Compiler\MSVC.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\FindOpenGL.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\FindPackageMessage.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Internal\CMakeCLinkerInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Internal\CMakeCXXLinkerInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Internal\CMakeCommonLinkerInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Linker\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Linker\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Linker\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Windows-Initialize.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\WindowsPaths.cmake;C:\Users\Traff\Documents\Unreal Projects\CG\Engine\build\CMakeFiles\3.31.5\CMakeCCompiler.cmake;C:\Users\Traff\Documents\Unreal Projects\CG\Engine\build\CMakeFiles\3.31.5\CMakeCXXCompiler.cmake;C:\Users\Traff\Documents\Unreal Projects\CG\Engine\build\CMakeFiles\3.31.5\CMakeRCCompiler.cmake;C:\Users\Traff\Documents\Unreal Projects\CG\Engine\build\CMakeFiles\3.31.5\CMakeSystem.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Users\Traff\Documents\Unreal Projects\CG\Engine\build\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkObjects>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Custom Rule E:/Univ5/CG/trabalho/CG/Engine/CMakeLists.txt</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Custom Rule C:/Users/Traff/Documents/Unreal Projects/CG/Engine/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">setlocal
-E:\Univ4\CMake\bin\cmake.exe -SE:/Univ5/CG/trabalho/CG/Engine -BE:/Univ5/CG/trabalho/CG/Engine/build --check-stamp-file E:/Univ5/CG/trabalho/CG/Engine/build/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" "-SC:/Users/Traff/Documents/Unreal Projects/CG/Engine" "-BC:/Users/Traff/Documents/Unreal Projects/CG/Engine/build" --check-stamp-file "C:/Users/Traff/Documents/Unreal Projects/CG/Engine/build/CMakeFiles/generate.stamp"
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -285,12 +296,12 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">E:\Univ4\CMake\share\cmake-3.28\Modules\CMakeCInformation.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\CMakeCXXInformation.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\CMakeCommonLanguageInclude.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\CMakeGenericSystem.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\CMakeInitializeConfigs.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\CMakeLanguageInformation.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\CMakeRCInformation.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\CMakeSystemSpecificInformation.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\CMakeSystemSpecificInitialize.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\Compiler\CMakeCommonCompilerMacros.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\Compiler\MSVC-C.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\Compiler\MSVC-CXX.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\Compiler\MSVC.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\FindOpenGL.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\FindPackageHandleStandardArgs.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\FindPackageMessage.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\Platform\Windows-Initialize.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\Platform\Windows-MSVC-C.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\Platform\Windows-MSVC-CXX.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\Platform\Windows-MSVC.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\Platform\Windows.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\Platform\WindowsPaths.cmake;E:\Univ5\CG\trabalho\CG\Engine\build\CMakeFiles\3.28.3\CMakeCCompiler.cmake;E:\Univ5\CG\trabalho\CG\Engine\build\CMakeFiles\3.28.3\CMakeCXXCompiler.cmake;E:\Univ5\CG\trabalho\CG\Engine\build\CMakeFiles\3.28.3\CMakeRCCompiler.cmake;E:\Univ5\CG\trabalho\CG\Engine\build\CMakeFiles\3.28.3\CMakeSystem.cmake;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">E:\Univ5\CG\trabalho\CG\Engine\build\CMakeFiles\generate.stamp</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeInitializeConfigs.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Compiler\MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Compiler\MSVC.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\FindOpenGL.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\FindPackageMessage.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Internal\CMakeCLinkerInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Internal\CMakeCXXLinkerInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Internal\CMakeCommonLinkerInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Linker\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Linker\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Linker\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Windows-Initialize.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\WindowsPaths.cmake;C:\Users\Traff\Documents\Unreal Projects\CG\Engine\build\CMakeFiles\3.31.5\CMakeCCompiler.cmake;C:\Users\Traff\Documents\Unreal Projects\CG\Engine\build\CMakeFiles\3.31.5\CMakeCXXCompiler.cmake;C:\Users\Traff\Documents\Unreal Projects\CG\Engine\build\CMakeFiles\3.31.5\CMakeRCCompiler.cmake;C:\Users\Traff\Documents\Unreal Projects\CG\Engine\build\CMakeFiles\3.31.5\CMakeSystem.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Users\Traff\Documents\Unreal Projects\CG\Engine\build\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkObjects>
-      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">Building Custom Rule E:/Univ5/CG/trabalho/CG/Engine/CMakeLists.txt</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">Building Custom Rule C:/Users/Traff/Documents/Unreal Projects/CG/Engine/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">setlocal
-E:\Univ4\CMake\bin\cmake.exe -SE:/Univ5/CG/trabalho/CG/Engine -BE:/Univ5/CG/trabalho/CG/Engine/build --check-stamp-file E:/Univ5/CG/trabalho/CG/Engine/build/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" "-SC:/Users/Traff/Documents/Unreal Projects/CG/Engine" "-BC:/Users/Traff/Documents/Unreal Projects/CG/Engine/build" --check-stamp-file "C:/Users/Traff/Documents/Unreal Projects/CG/Engine/build/CMakeFiles/generate.stamp"
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -298,12 +309,12 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">E:\Univ4\CMake\share\cmake-3.28\Modules\CMakeCInformation.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\CMakeCXXInformation.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\CMakeCommonLanguageInclude.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\CMakeGenericSystem.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\CMakeInitializeConfigs.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\CMakeLanguageInformation.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\CMakeRCInformation.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\CMakeSystemSpecificInformation.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\CMakeSystemSpecificInitialize.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\Compiler\CMakeCommonCompilerMacros.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\Compiler\MSVC-C.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\Compiler\MSVC-CXX.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\Compiler\MSVC.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\FindOpenGL.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\FindPackageHandleStandardArgs.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\FindPackageMessage.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\Platform\Windows-Initialize.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\Platform\Windows-MSVC-C.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\Platform\Windows-MSVC-CXX.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\Platform\Windows-MSVC.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\Platform\Windows.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\Platform\WindowsPaths.cmake;E:\Univ5\CG\trabalho\CG\Engine\build\CMakeFiles\3.28.3\CMakeCCompiler.cmake;E:\Univ5\CG\trabalho\CG\Engine\build\CMakeFiles\3.28.3\CMakeCXXCompiler.cmake;E:\Univ5\CG\trabalho\CG\Engine\build\CMakeFiles\3.28.3\CMakeRCCompiler.cmake;E:\Univ5\CG\trabalho\CG\Engine\build\CMakeFiles\3.28.3\CMakeSystem.cmake;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">E:\Univ5\CG\trabalho\CG\Engine\build\CMakeFiles\generate.stamp</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeInitializeConfigs.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Compiler\MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Compiler\MSVC.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\FindOpenGL.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\FindPackageMessage.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Internal\CMakeCLinkerInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Internal\CMakeCXXLinkerInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Internal\CMakeCommonLinkerInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Linker\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Linker\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Linker\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Windows-Initialize.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\WindowsPaths.cmake;C:\Users\Traff\Documents\Unreal Projects\CG\Engine\build\CMakeFiles\3.31.5\CMakeCCompiler.cmake;C:\Users\Traff\Documents\Unreal Projects\CG\Engine\build\CMakeFiles\3.31.5\CMakeCXXCompiler.cmake;C:\Users\Traff\Documents\Unreal Projects\CG\Engine\build\CMakeFiles\3.31.5\CMakeRCCompiler.cmake;C:\Users\Traff\Documents\Unreal Projects\CG\Engine\build\CMakeFiles\3.31.5\CMakeSystem.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:\Users\Traff\Documents\Unreal Projects\CG\Engine\build\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">false</LinkObjects>
-      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">Building Custom Rule E:/Univ5/CG/trabalho/CG/Engine/CMakeLists.txt</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">Building Custom Rule C:/Users/Traff/Documents/Unreal Projects/CG/Engine/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">setlocal
-E:\Univ4\CMake\bin\cmake.exe -SE:/Univ5/CG/trabalho/CG/Engine -BE:/Univ5/CG/trabalho/CG/Engine/build --check-stamp-file E:/Univ5/CG/trabalho/CG/Engine/build/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" "-SC:/Users/Traff/Documents/Unreal Projects/CG/Engine" "-BC:/Users/Traff/Documents/Unreal Projects/CG/Engine/build" --check-stamp-file "C:/Users/Traff/Documents/Unreal Projects/CG/Engine/build/CMakeFiles/generate.stamp"
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -311,18 +322,19 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">E:\Univ4\CMake\share\cmake-3.28\Modules\CMakeCInformation.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\CMakeCXXInformation.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\CMakeCommonLanguageInclude.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\CMakeGenericSystem.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\CMakeInitializeConfigs.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\CMakeLanguageInformation.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\CMakeRCInformation.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\CMakeSystemSpecificInformation.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\CMakeSystemSpecificInitialize.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\Compiler\CMakeCommonCompilerMacros.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\Compiler\MSVC-C.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\Compiler\MSVC-CXX.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\Compiler\MSVC.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\FindOpenGL.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\FindPackageHandleStandardArgs.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\FindPackageMessage.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\Platform\Windows-Initialize.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\Platform\Windows-MSVC-C.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\Platform\Windows-MSVC-CXX.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\Platform\Windows-MSVC.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\Platform\Windows.cmake;E:\Univ4\CMake\share\cmake-3.28\Modules\Platform\WindowsPaths.cmake;E:\Univ5\CG\trabalho\CG\Engine\build\CMakeFiles\3.28.3\CMakeCCompiler.cmake;E:\Univ5\CG\trabalho\CG\Engine\build\CMakeFiles\3.28.3\CMakeCXXCompiler.cmake;E:\Univ5\CG\trabalho\CG\Engine\build\CMakeFiles\3.28.3\CMakeRCCompiler.cmake;E:\Univ5\CG\trabalho\CG\Engine\build\CMakeFiles\3.28.3\CMakeSystem.cmake;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">E:\Univ5\CG\trabalho\CG\Engine\build\CMakeFiles\generate.stamp</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeInitializeConfigs.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Compiler\MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Compiler\MSVC.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\FindOpenGL.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\FindPackageMessage.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Internal\CMakeCLinkerInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Internal\CMakeCXXLinkerInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Internal\CMakeCommonLinkerInformation.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Linker\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Linker\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Linker\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Windows-Initialize.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.31\Modules\Platform\WindowsPaths.cmake;C:\Users\Traff\Documents\Unreal Projects\CG\Engine\build\CMakeFiles\3.31.5\CMakeCCompiler.cmake;C:\Users\Traff\Documents\Unreal Projects\CG\Engine\build\CMakeFiles\3.31.5\CMakeCXXCompiler.cmake;C:\Users\Traff\Documents\Unreal Projects\CG\Engine\build\CMakeFiles\3.31.5\CMakeRCCompiler.cmake;C:\Users\Traff\Documents\Unreal Projects\CG\Engine\build\CMakeFiles\3.31.5\CMakeSystem.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:\Users\Traff\Documents\Unreal Projects\CG\Engine\build\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">false</LinkObjects>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="E:\Univ5\CG\trabalho\CG\Engine\main.cpp" />
-    <ClCompile Include="E:\Univ5\CG\trabalho\CG\Engine\tinyxml2\tinyxml2.cpp" />
+    <ClCompile Include="C:\Users\Traff\Documents\Unreal Projects\CG\Engine\main.cpp" />
+    <ClCompile Include="C:\Users\Traff\Documents\Unreal Projects\CG\Engine\tinyxml2\tinyxml2.cpp" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <ProjectReference Include="E:\Univ5\CG\trabalho\CG\Engine\build\ZERO_CHECK.vcxproj">
-      <Project>{B90C99FF-B305-3C41-83F0-7095AC1CD5F5}</Project>
+    <ProjectReference Include="C:\Users\Traff\Documents\Unreal Projects\CG\Engine\build\ZERO_CHECK.vcxproj">
+      <Project>{8608BB32-BFE2-35F3-90E0-CCFEA1B7F02A}</Project>
       <Name>ZERO_CHECK</Name>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>

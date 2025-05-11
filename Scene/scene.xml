@@ -1,50 +1,76 @@
 <world>
+    <!-- Window & Camera -->
     <window width="800" height="600"/>
-
     <camera>
         <position x="20" y="50" z="-60"/>
         <lookAt  x="0"  y="0"  z="0"/>
-        <up      x="0"  y="1"  z="0"/>
+        <up      x="0"  y="1" z="0"/>
         <projection fov="70" near="1" far="300"/>
     </camera>
+    <lights>
+      <light id="0" type="point" posX="0" posY="0" posZ="0">
+        <diffuse R="255" G="255" B="255"/>
+        <specular R="255" G="255" B="255"/>
+        <ambient  R="0"   G="0"   B="0"/>
+      </light>
+    </lights>
 
+
+
+    <!-- Scene Graph -->
     <group>
-        <!-- Sun -->
+        <!-- Sun (only light source) -->
         <transform>
             <scale x="5" y="5" z="5"/>
         </transform>
-        <models><model file="sphere.3d"/></models>
+        <models>
+            <model file="sphere.3d">
+                <texture file="sun.jpg"/>
+                <color>
+                    <diffuse R="255" G="255" B="200"/>
+                    <ambient R="0" G="0" B="0"/>
+                    <specular R="255" G="255" B="200"/>
+                    <emissive R="255" G="220" B="100"/>
+                    <shininess value="0"/>
+                </color>
+            </model>
+        </models>
 
-        <!-- ---------- PLANETS (orbit + self-spin) ---------- -->
         <!-- Mercury -->
         <group>
-            <!-- orbit -->
             <transform>
-                <rotate time="4"  x="0" y="1" z="0"/>
-                <translate x="7"  y="0" z="0"/>
+                <rotate time="4" x="0" y="1" z="0"/>
+                <translate x="7" y="0" z="0"/>
             </transform>
-            <!-- planet body -->
             <group>
                 <transform>
                     <rotate time="2" x="0" y="1" z="0"/>
-                    <scale  x="0.30" y="0.30" z="0.30"/>
+                    <scale x="0.30" y="0.30" z="0.30"/>
                 </transform>
-                <models><model file="sphere.3d"/></models>
+                <models>
+                    <model file="sphere.3d">
+                        <texture file="mercury.jpg"/>
+                    </model>
+                </models>
             </group>
         </group>
 
         <!-- Venus -->
         <group>
             <transform>
-                <rotate time="7"  x="0" y="1" z="0"/>
-                <translate x="9"  y="0" z="0"/>
+                <rotate time="7" x="0" y="1" z="0"/>
+                <translate x="9" y="0" z="0"/>
             </transform>
             <group>
                 <transform>
                     <rotate time="6" x="0" y="1" z="0"/>
-                    <scale  x="0.40" y="0.40" z="0.40"/>
+                    <scale x="0.40" y="0.40" z="0.40"/>
                 </transform>
-                <models><model file="sphere.3d"/></models>
+                <models>
+                    <model file="sphere.3d">
+                        <texture file="venus.jpg"/>
+                    </model>
+                </models>
             </group>
         </group>
 
@@ -57,18 +83,26 @@
             <group>
                 <transform>
                     <rotate time="2" x="0" y="1" z="0"/>
-                    <scale  x="0.45" y="0.45" z="0.45"/>
+                    <scale x="0.45" y="0.45" z="0.45"/>
                 </transform>
-                <models><model file="sphere.3d"/></models>
+                <models>
+                    <model file="sphere.3d">
+                        <texture file="earth.jpg"/>
+                    </model>
+                </models>
 
                 <!-- Moon -->
                 <group>
                     <transform>
                         <rotate time="3" x="0" y="1" z="0"/>
                         <translate x="1.5" y="0" z="0"/>
-                        <scale  x="0.10" y="0.10" z="0.10"/>
+                        <scale x="0.10" y="0.10" z="0.10"/>
                     </transform>
-                    <models><model file="sphere.3d"/></models>
+                    <models>
+                        <model file="sphere.3d">
+                            <texture file="moon.jpg"/>
+                        </model>
+                    </models>
                 </group>
             </group>
         </group>
@@ -82,9 +116,13 @@
             <group>
                 <transform>
                     <rotate time="2" x="0" y="1" z="0"/>
-                    <scale  x="0.38" y="0.38" z="0.38"/>
+                    <scale x="0.38" y="0.38" z="0.38"/>
                 </transform>
-                <models><model file="sphere.3d"/></models>
+                <models>
+                    <model file="sphere.3d">
+                        <texture file="mars.jpg"/>
+                    </model>
+                </models>
             </group>
         </group>
 
@@ -97,9 +135,13 @@
             <group>
                 <transform>
                     <rotate time="1" x="0" y="1" z="0"/>
-                    <scale  x="1.20" y="1.20" z="1.20"/>
+                    <scale x="1.20" y="1.20" z="1.20"/>
                 </transform>
-                <models><model file="sphere.3d"/></models>
+                <models>
+                    <model file="sphere.3d">
+                        <texture file="jupiter.jpg"/>
+                    </model>
+                </models>
             </group>
         </group>
 
@@ -112,9 +154,13 @@
             <group>
                 <transform>
                     <rotate time="1" x="0" y="1" z="0"/>
-                    <scale  x="1.00" y="1.00" z="1.00"/>
+                    <scale x="1.00" y="1.00" z="1.00"/>
                 </transform>
-                <models><model file="sphere.3d"/></models>
+                <models>
+                    <model file="sphere.3d">
+                        <texture file="saturn.jpg"/>
+                    </model>
+                </models>
             </group>
         </group>
 
@@ -127,9 +173,13 @@
             <group>
                 <transform>
                     <rotate time="2" x="0" y="1" z="0"/>
-                    <scale  x="0.70" y="0.70" z="0.70"/>
+                    <scale x="0.70" y="0.70" z="0.70"/>
                 </transform>
-                <models><model file="sphere.3d"/></models>
+                <models>
+                    <model file="sphere.3d">
+                        <texture file="uranus.jpg"/>
+                    </model>
+                </models>
             </group>
         </group>
 
@@ -142,17 +192,20 @@
             <group>
                 <transform>
                     <rotate time="2" x="0" y="1" z="0"/>
-                    <scale  x="0.70" y="0.70" z="0.70"/>
+                    <scale x="0.70" y="0.70" z="0.70"/>
                 </transform>
-                <models><model file="sphere.3d"/></models>
+                <models>
+                    <model file="sphere.3d">
+                        <texture file="neptune.jpg"/>
+                    </model>
+                </models>
             </group>
         </group>
 
-        <!-- ---------- COMET (Catmull-Rom path) ---------- -->
+        <!-- Comet (Teapot) -->
         <group>
             <transform>
                 <translate time="12" align="true">
-                    <!-- dummy first/last points for Catmull-Rom -->
                     <point x="-15" y="0"  z="-10"/>
                     <point x="-10" y="3"  z="0"/>
                     <point x="-5"  y="5"  z="10"/>
@@ -161,12 +214,16 @@
                     <point x="15"  y="0"  z="-10"/>
                     <point x="20"  y="0"  z="-20"/>
                 </translate>
-                <rotate time="6"  x="0" y="1" z="0"/>
-                <scale  x="0.4" y="0.4" z="0.4"/>
-        	<!-- FIX ORIENTATION -->
-        	<rotate angle="-90" x="1" y="0" z="0"/>
+                <rotate time="6" x="0" y="1" z="0"/>
+                <scale x="0.4" y="0.4" z="0.4"/>
+                <!-- Fix orientation -->
+                <rotate angle="-90" x="1" y="0" z="0"/>
             </transform>
-            <models><model file="teapot.3d"/></models>
+            <models>
+                <model file="teapot.3d">
+                    <texture file="teapotTexture.jpg"/>
+                </model>
+            </models>
         </group>
     </group>
 </world>

@@ -1,6 +1,6 @@
-^E:\UNIV5\CG\TRABALHO\CG\ENGINE\BUILD\CMAKEFILES\3F5B13466762C33B068FD704B183A549\GENERATE.STAMP.RULE
+^C:\USERS\TRAFF\DOCUMENTS\UNREAL PROJECTS\CG\ENGINE\BUILD\CMAKEFILES\2B328D9AB6AE2B2E8AC07D59F98F1795\GENERATE.STAMP.RULE
 setlocal
-E:\Univ4\CMake\bin\cmake.exe -SE:/Univ5/CG/trabalho/CG/Engine -BE:/Univ5/CG/trabalho/CG/Engine/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file E:/Univ5/CG/trabalho/CG/Engine/build/class1.sln
+"C:\Program Files\CMake\bin\cmake.exe" "-SC:/Users/Traff/Documents/Unreal Projects/CG/Engine" "-BC:/Users/Traff/Documents/Unreal Projects/CG/Engine/build" --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file "C:/Users/Traff/Documents/Unreal Projects/CG/Engine/build/class1.sln"
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone

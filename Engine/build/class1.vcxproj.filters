@@ -1,19 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="E:\Univ5\CG\trabalho\CG\Engine\main.cpp">
+    <ClCompile Include="C:\Users\Traff\Documents\Unreal Projects\CG\Engine\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="E:\Univ5\CG\trabalho\CG\Engine\tinyxml2\tinyxml2.cpp">
+    <ClCompile Include="C:\Users\Traff\Documents\Unreal Projects\CG\Engine\tinyxml2\tinyxml2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="E:\Univ5\CG\trabalho\CG\Engine\CMakeLists.txt" />
+    <CustomBuild Include="C:\Users\Traff\Documents\Unreal Projects\CG\Engine\CMakeLists.txt" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">
-      <UniqueIdentifier>{9AC1EDBD-0088-3A7E-8A0F-777A8DAC82EB}</UniqueIdentifier>
+      <UniqueIdentifier>{1B92264D-D4ED-36EA-BC18-AF8521386A86}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -14,327 +14,194 @@
 #define M_PI 3.14159265358979323846
 #endif
 using Vec3 = std::tuple<float, float, float>;
-// Writes a list of (x, y, z) vertices to a file.
-void writeToFile(const std::string& filename,
-                 const std::vector<std::tuple<float, float, float>>& vertices) {
-    std::ofstream file(filename);
-    if (!file.is_open()) {
-        std::cerr << "Error: Could not open output file " << filename << std::endl;
-        return;
-    }
 
-    // (Optional) Write the number of vertices as the first line
-    file << vertices.size() << std::endl;
-    
-    for (const auto& v : vertices) {
-        file << std::get<0>(v) << " "
-             << std::get<1>(v) << " "
-             << std::get<2>(v) << "\n";
-    }
 
-    file.close();
+struct Vertex {
+    float x, y, z;      // position
+    float nx, ny, nz;   // normal
+    float u, v;         // UV
+};
+using VertList = std::vector<Vertex>;
+
+inline void pushTri(VertList& v,
+                    const Vertex& a,
+                    const Vertex& b,
+                    const Vertex& c) {
+    v.push_back(a); v.push_back(b); v.push_back(c);
 }
+
+
+void writeToFile(const std::string& filename, const VertList& v) {
+    std::ofstream f(filename);
+    if (!f) throw std::runtime_error("cannot open " + filename);
+
+    f << v.size() << '\n';
+    for (const auto& p : v)
+        f << p.x  << ' ' << p.y  << ' ' << p.z  << ' '
+          << p.nx << ' ' << p.ny << ' ' << p.nz << ' '
+          << p.u  << ' ' << p.v  << '\n';
+}
+
 
 // Generates a plane on the XZ plane, centered at the origin.
 // size: total length of one side of the square
 // divisions: number of subdivisions along each axis (the plane will be split into divisions x divisions quads).
-void generatePlane(const std::string& filename, float size, int divisions) {
-    std::vector<std::tuple<float, float, float>> triangles;
-    float half = size / 2.0f;
-    float step = size / (float)divisions;
+void generatePlane(const std::string& filename,float size,int divisions){
+    const float half=size/2.0f, step=size/divisions;
+    VertList v;
 
-    // Generate two triangles for each quad subdivision
-    for (int i = 0; i < divisions; ++i) {
-        for (int j = 0; j < divisions; ++j) {
-            // Coordinates for corners of the current quad
-            float x1 = -half + j * step;
-            float z1 = half - i * step;
-            float x2 = x1 + step;
-            float z2 = z1 - step;
-
-            // The square (quad) corners:
-            //  (x1,z1)  ----  (x2,z1)
-            //     |              |
-            //  (x1,z2)  ----  (x2,z2)
-
-            // Triangle 1: top-left, bottom-left, top-right
-            triangles.push_back(std::make_tuple(x1, 0.0f, z2));
-            triangles.push_back(std::make_tuple(x1, 0.0f, z1));
-            triangles.push_back(std::make_tuple(x2, 0.0f, z1));
-
-            // Triangle 2: bottom-left, bottom-right, top-right
-            triangles.push_back(std::make_tuple(x2, 0.0f, z1));
-            triangles.push_back(std::make_tuple(x2, 0.0f, z2));
-            triangles.push_back(std::make_tuple(x1, 0.0f, z2));
+    for(int i=0;i<divisions;++i)
+        for(int j=0;j<divisions;++j){
+            float x0=-half+j*step, x1=x0+step;
+            float z0= half-i*step, z1=z0-step;
+            // normals & uv
+            Vertex a{x0,0,z1, 0,1,0, float(j)/divisions,     float(i+1)/divisions};
+            Vertex b{x0,0,z0, 0,1,0, float(j)/divisions,     float(i)/divisions};
+            Vertex c{x1,0,z0, 0,1,0, float(j+1)/divisions,   float(i)/divisions};
+            Vertex d{x1,0,z1, 0,1,0, float(j+1)/divisions,   float(i+1)/divisions};
+            pushTri(v,a,b,c);
+            pushTri(v,c,d,a);
         }
-    }
-
-    writeToFile(filename, triangles);
+    writeToFile(filename,v);
 }
+
 
 // Generates a box centered at the origin.
 // size: the length of an edge of the cube
 // divisions: number of subdivisions along each edge of the cube
-void generateBox(const std::string& filename, float size, int divisions) {
-    std::vector<std::tuple<float, float, float>> vertices;
-    
-    // If you only want one face per side without subdivisions, ignore `divisions`.
-    // If you want to implement subdivisions, we do it similarly to the plane,
-    // but in 3D. For Phase 1, you can simplify to just 1 face (divisions=1).
-    
-    float half = size / 2.0f;
-    float step = size / (float)divisions;
+void generateBox(const std::string& filename,float size,int divisions){
+    const float h=size/2.0f, step=size/divisions;
+    VertList v;
 
-    // We will generate each face in (divisions x divisions) quads, each producing 2 triangles.
-    // The faces: front, back, left, right, top, bottom.
-
-    // Lambda to help push back two triangles forming one quad on a given plane.
-    auto pushQuad = [&](float x1, float y1, float z1,
-                        float x2, float y2, float z2,
-                        float x3, float y3, float z3,
-                        float x4, float y4, float z4) {
-        // Triangle 1
-        vertices.emplace_back(x1, y1, z1);
-        vertices.emplace_back(x2, y2, z2);
-        vertices.emplace_back(x3, y3, z3);
-
-        // Triangle 2
-        vertices.emplace_back(x3, y3, z3);
-        vertices.emplace_back(x4, y4, z4);
-        vertices.emplace_back(x1, y1, z1);
+    auto face=[&](float nx,float ny,float nz,      // normal
+                  float ux,float uy,float uz,      // u-axis
+                  float vx,float vy,float vz,      // v-axis
+                  float ox,float oy,float oz){     // origin (lower-left corner)
+        for(int i=0;i<divisions;++i)
+            for(int j=0;j<divisions;++j){
+                float u0=j*step,   v0=i*step;
+                float u1=u0+step,  v1=v0+step;
+                auto make=[&](float u,float v){
+                    float x=ox+ux*u+vx*v;
+                    float y=oy+uy*u+vy*v;
+                    float z=oz+uz*u+vz*v;
+                    return Vertex{x,y,z, nx,ny,nz,
+                                   u/size, v/size};
+                };
+                Vertex a=make(u0,v1), b=make(u0,v0),
+                       c=make(u1,v0), d=make(u1,v1);
+                pushTri(v,a,b,c);
+                pushTri(v,c,d,a);
+            }
     };
 
-    // For each face, we step through a grid of size divisions x divisions.
-    // FRONT FACE (z = +half), going from -half to +half in x and y
-    for(int i = 0; i < divisions; ++i){
-        for(int j = 0; j < divisions; ++j){
-            float x1 = -half + j * step;
-            float y1 = -half + i * step;
-            float x2 = x1 + step;
-            float y2 = y1 + step;
-            float z = half; // front face
+    // +Z (front)
+    face(0,0,1,  1,0,0, 0,1,0, -h,-h, h);
+    // -Z (back)
+    face(0,0,-1, -1,0,0,0,1,0,  h,-h,-h);
+    // -X (left)
+    // LEFT  (x = -1, z goes +1 → -1)
+    face(-1,0,0,  0,0, 1, 0,1,0,  -h,-h, h);
 
-            pushQuad( x1, y2, z,
-                      x1, y1, z,
-                      x2, y1, z,
-                      x2, y2, z );
-        }
-    }
+    // RIGHT (x = +1, z goes -1 → +1)
+    face( 1,0,0,  0,0,-1, 0,1,0,   h,-h,-h);
 
-    // BACK FACE (z = -half)
-    for(int i = 0; i < divisions; ++i){
-        for(int j = 0; j < divisions; ++j){
-            float x1 = -half + j * step;
-            float y1 = -half + i * step;
-            float x2 = x1 + step;
-            float y2 = y1 + step;
-            float z = -half; // back face
+    // +Y (top)
+    face(0,1,0,  1,0,0, 0,0,-1,-h, h, h);
+    // -Y (bottom)
+    face(0,-1,0, 1,0,0, 0,0,1, -h,-h,-h);
 
-            // Note the order to keep consistent winding (or invert if needed).
-            pushQuad( x2, y1, z,
-                      x1, y1, z,
-                      x1, y2, z,
-                      x2, y2, z );
-        }
-    }
-
-    // LEFT FACE (x = -half)
-    for(int i = 0; i < divisions; ++i){
-        for(int j = 0; j < divisions; ++j){
-            float z1 = half - j * step;
-            float y1 = -half + i * step;
-            float z2 = z1 - step;
-            float y2 = y1 + step;
-            float x = -half;
-
-            pushQuad( x, y2, z2,
-                      x, y1, z2,
-                      x, y1, z1,
-                      x, y2, z1 );
-        }
-    }
-
-    // RIGHT FACE (x = +half)
-    for(int i = 0; i < divisions; ++i){
-        for(int j = 0; j < divisions; ++j){
-            float z1 = half - j * step;
-            float y1 = -half + i * step;
-            float z2 = z1 - step;
-            float y2 = y1 + step;
-            float x = half;
-
-            // Reverse the order to keep consistent winding
-            pushQuad( x, y2, z1,
-                      x, y1, z1,
-                      x, y1, z2,
-                      x, y2, z2 );
-        }
-    }
-
-    // TOP FACE (y = +half)
-    for(int i = 0; i < divisions; ++i){
-        for(int j = 0; j < divisions; ++j){
-            float x1 = -half + j * step;
-            float z1 = half - i * step;
-            float x2 = x1 + step;
-            float z2 = z1 - step;
-            float y = half;
-
-            pushQuad( x2, y, z1,
-                      x2, y, z2,
-                      x1, y, z2,
-                      x1, y, z1 );
-        }
-    }
-
-    // BOTTOM FACE (y = -half)
-    for(int i = 0; i < divisions; ++i){
-        for(int j = 0; j < divisions; ++j){
-            float x1 = -half + j * step;
-            float z1 = half - i * step;
-            float x2 = x1 + step;
-            float z2 = z1 - step;
-            float y = -half;
-
-            // Reverse order for consistent winding
-            pushQuad( x2, y, z2,
-                      x2, y, z1,
-                      x1, y, z1,
-                      x1, y, z2 );
-        }
-    }
-
-    writeToFile(filename, vertices);
+    writeToFile(filename,v);
 }
+
 
 // Generates a sphere centered at the origin.
 // radius: Sphere radius
 // slices: number of vertical divisions
 // stacks: number of horizontal divisions
-void generateSphere(const std::string& filename, float radius, int slices, int stacks) {
-    std::vector<std::tuple<float, float, float>> triangles;
-
-    // We first create a grid of (slices+1)*(stacks+1) vertices in spherical coordinates.
-    // Then we connect adjacent vertices to form triangles.
-
-    // Store the vertices in a 2D array-like structure for easy indexing
-    std::vector<std::vector<std::tuple<float, float, float>>> grid(stacks + 1,
-        std::vector<std::tuple<float, float, float>>(slices + 1));
-
-    for (int stack = 0; stack <= stacks; ++stack) {
-        // phi goes from 0 (top) to pi (bottom)
-        float phi = M_PI * float(stack) / float(stacks);
-        for (int slice = 0; slice <= slices; ++slice) {
-            // theta goes around the sphere from 0 to 2*pi
-            float theta = 2.0f * M_PI * float(slice) / float(slices);
-            float x = radius * sinf(phi) * cosf(theta);
-            float y = radius * cosf(phi);
-            float z = radius * sinf(phi) * sinf(theta);
-            grid[stack][slice] = std::make_tuple(x, y, z);
+void generateSphere(const std::string& filename,float r,int slices,int stacks){
+    std::vector<std::vector<Vertex>> grid(stacks+1,std::vector<Vertex>(slices+1));
+    for(int i=0;i<=stacks;++i){
+        float phi=M_PI*i/stacks;
+        for(int j=0;j<=slices;++j){
+            float theta=2*M_PI*j/slices;
+            float x=r*sinf(phi)*cosf(theta),
+                  y=r*cosf(phi),
+                  z=r*sinf(phi)*sinf(theta);
+            float nx=x/r, ny=y/r, nz=z/r;
+            float u=theta/(2*M_PI), v=phi/M_PI;
+            grid[i][j]={x,y,z, nx,ny,nz, u,v};
         }
     }
 
-    // Connect these vertices with two triangles per "quad" in the grid.
-    for (int stack = 0; stack < stacks; ++stack) {
-        for (int slice = 0; slice < slices; ++slice) {
-            // Indices for the four corners of the quad
-            auto p1 = grid[stack][slice];
-            auto p2 = grid[stack + 1][slice];
-            auto p3 = grid[stack][slice + 1];
-            auto p4 = grid[stack + 1][slice + 1];
-
-            // First triangle
-            triangles.push_back(p2);
-            triangles.push_back(p1);
-            triangles.push_back(p3);
-
-            // Second triangle
-            triangles.push_back(p3);
-            triangles.push_back(p4);
-            triangles.push_back(p2);
+    VertList v;
+    for(int i=0;i<stacks;++i)
+        for(int j=0;j<slices;++j){
+            Vertex p1=grid[i][j],
+                   p2=grid[i+1][j],
+                   p3=grid[i][j+1],
+                   p4=grid[i+1][j+1];
+            pushTri(v,p2,p1,p3);
+            pushTri(v,p3,p4,p2);
         }
-    }
-
-    writeToFile(filename, triangles);
+    writeToFile(filename,v);
 }
+
 
 // Generates a cone with the base centered on the XZ-plane and its apex along +Y.
 // radius: radius of the base
 // height: cone height
 // slices: divisions around the axis
 // stacks: divisions from the base to the apex
-void generateCone(const std::string& filename, float radius, float height,
-                  int slices, int stacks) {
-    std::vector<std::tuple<float, float, float>> vertices;
+void generateCone(const std::string& filename,float R,float H,int slices,int stacks){
+    VertList v;
+    const float dTheta=2*M_PI/slices;
 
-    // 1) Generate the base (a circle on the XZ plane at y = 0).
-    //    We do a fan from the center (0,0,0) to each triangle around the circle.
-
-    float theta_step = 2.0f * M_PI / slices;
-    for (int i = 0; i < slices; ++i) {
-        float theta = i * theta_step;
-        float nextTheta = (i + 1) * theta_step;
-        // Center
-        vertices.push_back(std::make_tuple(0.0f, 0.0f, 0.0f));
-        // Current point on circle
-        vertices.push_back(std::make_tuple(radius * cosf(theta),
-                                           0.0f,
-                                           radius * sinf(theta)));
-        // Next point on circle
-        vertices.push_back(std::make_tuple(radius * cosf(nextTheta),
-                                           0.0f,
-                                           radius * sinf(nextTheta)));
+    // ---- base (y=0, normal 0,-1,0) ----
+    for(int i=0;i<slices;++i){
+        float t0=i*dTheta, t1=(i+1)*dTheta;
+        Vertex c{0,0,0, 0,-1,0, 0.5f,0.5f};
+        Vertex a{R*cosf(t0),0,R*sinf(t0), 0,-1,0,
+                 0.5f+0.5f*cosf(t0), 0.5f+0.5f*sinf(t0)};
+        Vertex b{R*cosf(t1),0,R*sinf(t1), 0,-1,0,
+                 0.5f+0.5f*cosf(t1), 0.5f+0.5f*sinf(t1)};
+        pushTri(v,a,b,c);
     }
 
-    // 2) Generate the side surface.
-    //    We'll slice the cone in "stacks" along its height, forming ring-like cross-sections
-    //    from y=0 (radius = R) up to y=height (radius = 0).
-    //    Each ring is an approximation for that height segment.
-
-    // For each stack level, we have a smaller circle, until we reach the apex.
-    // radius decreases linearly, from 'radius' at y=0 to 0 at y=height.
-
-    float stackHeight = height / stacks;
-    for (int st = 0; st < stacks; ++st) {
-        float y_lower = st * stackHeight;            // base of current ring
-        float y_upper = (st + 1) * stackHeight;      // top of current ring
-
-        float r_lower = radius * (1.0f - (float)st / stacks);       // radius at y_lower
-        float r_upper = radius * (1.0f - (float)(st + 1) / stacks); // radius at y_upper
-
-        for (int s = 0; s < slices; ++s) {
-            float theta = s * theta_step;
-            float nextTheta = (s + 1) * theta_step;
-
-            // The four corners of the quad on the ring
-            std::tuple<float, float, float> p1 = {
-                r_lower * cosf(theta), y_lower, r_lower * sinf(theta)
+    // ---- side ----
+    float stackH=H/stacks;
+    for(int st=0;st<stacks;++st){
+        float y0=st*stackH,     y1=(st+1)*stackH;
+        float r0=R*(1.f - st/float(stacks)),
+              r1=R*(1.f - (st+1)/float(stacks));
+        for(int s=0;s<slices;++s){
+            float t0=s*dTheta, t1=(s+1)*dTheta;
+            // positions
+            auto P=[&](float r,float y,float t){
+                return Vec3{r*cosf(t), y, r*sinf(t)};
             };
-            std::tuple<float, float, float> p2 = {
-                r_lower * cosf(nextTheta), y_lower, r_lower * sinf(nextTheta)
+            // vertices with normals & UV
+            auto make=[&](float r,float y,float t){
+                float x=r*cosf(t), z=r*sinf(t);
+                float nx=x, ny=R/H, nz=z;
+                float len=sqrtf(nx*nx+ny*ny+nz*nz);
+                nx/=len; ny/=len; nz/=len;
+                float u=t/(2*M_PI);   // <<< use t, not t0
+                float v=y/H;
+                return Vertex{x,y,z, nx,ny,nz, u,v};
             };
-            std::tuple<float, float, float> p3 = {
-                r_upper * cosf(theta), y_upper, r_upper * sinf(theta)
-            };
-            std::tuple<float, float, float> p4 = {
-                r_upper * cosf(nextTheta), y_upper, r_upper * sinf(nextTheta)
-            };
-
-            // Two triangles for each quad
-            // Triangle 1: p1, p2, p3
-            vertices.push_back(p2);
-            vertices.push_back(p1);
-            vertices.push_back(p3);
-
-            // Triangle 2: p3, p2, p4
-            vertices.push_back(p3);
-            vertices.push_back(p4);
-            vertices.push_back(p2);
+            
+            Vertex p1=make(r0,y0,t0);
+            Vertex p2=make(r0,y0,t1);
+            Vertex p3=make(r1,y1,t0);
+            Vertex p4=make(r1,y1,t1);
+            pushTri(v,p2,p1,p3);
+            pushTri(v,p3,p4,p2);
         }
     }
-
-    writeToFile(filename, vertices);
+    writeToFile(filename,v);
 }
+
 
 // Read all control points from a file: groups of 16 (4x4) points per patch
 std::vector<std::vector<Vec3>> loadBezierPatches(const std::string& ctrlFile) {
@@ -424,7 +291,8 @@ void generateBezier(const std::string& filename,
     const std::string& ctrlFile,
     int tessellation) {
     auto patches = loadBezierPatches(ctrlFile);
-    std::vector<Vec3> tris;
+    VertList tris;          // was std::vector<Vec3>
+
 
     // For each patch:
     for (const auto& cp : patches) {
@@ -440,19 +308,31 @@ void generateBezier(const std::string& filename,
             Vec3 p11 = evalPatch(cp, u1, v1);
             Vec3 p01 = evalPatch(cp, u0, v1);
 
-            // Triangle A: p00, p10, p11
-            tris.push_back(p00);
-            tris.push_back(p10);
-            tris.push_back(p11);
-            // Triangle B: p00, p11, p01
-            tris.push_back(p00);
-            tris.push_back(p11);
-            tris.push_back(p01);
+            auto makeV=[&](const Vec3& P,float u,float v){
+                float x,y,z; std::tie(x,y,z)=P;
+                // normal via finite diff
+                const float eps=1e-3f;
+                Vec3 du=evalPatch(cp,u+eps,v), dv=evalPatch(cp,u,v+eps);
+                float ux,uy,uz,vx,vy,vz;
+                std::tie(ux,uy,uz)=du; std::tie(vx,vy,vz)=dv;
+                float nx=uy*uz - uz*vy,
+                      ny=uz*vx - ux*uz,
+                      nz=ux*vy - uy*vx;
+                float len=sqrtf(nx*nx+ny*ny+nz*nz);
+                if(len>0){ nx/=len; ny/=len; nz/=len; }
+                return Vertex{x,y,z, nx,ny,nz, u,v};
+            };
+            Vertex v00=makeV(p00,u0,v0), v10=makeV(p10,u1,v0);
+            Vertex v11=makeV(p11,u1,v1), v01=makeV(p01,u0,v1);
+            pushTri(tris,v00,v10,v11);
+            pushTri(tris,v00,v11,v01);
+            
             }
         }
-}
+    }
 
-writeToFile(filename, tris);
+    writeToFile(filename,tris);
+
 }
 
 
