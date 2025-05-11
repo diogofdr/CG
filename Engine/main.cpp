@@ -43,7 +43,14 @@
 
 using namespace std;
 using namespace tinyxml2;
-
+// -------------------------------------------------------------------------
+// 0.  DevIL initialization
+// -------------------------------------------------------------------------
+static void initDevIL() {
+    ilInit();
+    ilEnable(IL_ORIGIN_SET);
+    ilOriginFunc(IL_ORIGIN_LOWER_LEFT);
+}
 // -------------------------------------------------------------------------
 // 2.  GLOBAL WINDOW & CAMERA STATE (keep minimal – refactor further if bored)
 // -------------------------------------------------------------------------
@@ -208,9 +215,7 @@ namespace math {
 
 } // namespace math
 
-// -------------------------------------------------------------------------
-// 6.  XML PARSING → SCENE GRAPH (recursive descent)
-// -------------------------------------------------------------------------
+
 // -------------------------------------------------------------------------
 // 6.  XML PARSING → SCENE GRAPH (recursive descent)
 // -------------------------------------------------------------------------
@@ -479,6 +484,54 @@ static void loadModelVertices(int idx, const char* path)
     }
 }
 
+// -------------------------------------------------------------------------
+// 7b.  TEXTURE LOADING (DevIL → OpenGL)
+// -------------------------------------------------------------------------
+int loadTexture(const std::string& path) {
+    ILuint img;
+    ilGenImages(1, &img);
+    ilBindImage(img);
+
+    // Try to load from disk
+    if (!ilLoadImage((ILstring)path.c_str())) {
+        ILenum err = ilGetError();
+        std::cerr << "DevIL failed to load '"
+            << path << "': error " << err << "\n";
+        ilDeleteImages(1, &img);
+        return 0;
+    }
+
+    // Convert to RGBA and fetch size/data
+    ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE);
+    const int w = ilGetInteger(IL_IMAGE_WIDTH);
+    const int h = ilGetInteger(IL_IMAGE_HEIGHT);
+    unsigned char* data = ilGetData();
+
+    // Upload to OpenGL
+    GLuint texID = 0;
+    glGenTextures(1, &texID);
+    if (texID == 0) {
+        std::cerr << "glGenTextures failed for '" << path << "'\n";
+        ilDeleteImages(1, &img);
+        return 0;
+    }
+
+    glBindTexture(GL_TEXTURE_2D, texID);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexImage2D(
+        GL_TEXTURE_2D, 0, GL_RGBA,
+        w, h, 0,
+        GL_RGBA, GL_UNSIGNED_BYTE,
+        data
+    );
+    glGenerateMipmap(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    // Clean up DevIL image now that it's on the GPU
+    ilDeleteImages(1, &img);
+    return texID;
+}
 void renderModel(int i) {
     const Model& m = g_models[i];
 
@@ -696,12 +749,15 @@ static void display() {
     glutSwapBuffers();
 }
 
+
 // -------------------------------------------------------------------------
-// 11. PROGRAM ENTRY POINT
+// 11. PROGRAM ENTRY POINT (with DevIL init + new texture loader)
 // -------------------------------------------------------------------------
 int main(int argc, char** argv) {
+    // 1) Parse your scene XML
     loadXML("../../Scene/Scene.xml");
 
+    // 2) Initialize GLUT
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
     glutInitWindowPosition(100, 100);
@@ -710,36 +766,40 @@ int main(int argc, char** argv) {
 
 #ifndef __APPLE__
     if (glewInit() != GLEW_OK) {
-        cerr << "[FATAL] GLEW initialisation failed" << '\n';
+        std::cerr << "[FATAL] GLEW initialization failed\n";
         return EXIT_FAILURE;
     }
 #endif
 
-    // load all model files now that the GL context exists ----------------
-    for (size_t i = 0;i < g_modelFiles.size();++i) {
-        char full[256]; snprintf(full, sizeof(full), "../../modelos/%s", g_modelFiles[i].c_str());
-        loadModelVertices((int)i, full);           // texture handled inside
+    // 3) Initialize DevIL exactly once
+    initDevIL();
+
+    // 4) Load all VBOs and textures now that GL & DevIL are ready
+    for (size_t i = 0; i < g_modelFiles.size(); ++i) {
+        char fullPath[256];
+        snprintf(fullPath, sizeof(fullPath), "../../modelos/%s", g_modelFiles[i].c_str());
+        loadModelVertices((int)i, fullPath);
     }
 
-
-    // register GLUT callbacks -------------------------------------------
+    // 5) Register your GLUT callbacks
     glutDisplayFunc(display);
     glutReshapeFunc(reshape);
     glutKeyboardFunc(keyboard);
     glutSpecialFunc(special);
     glutIdleFunc(display);
 
-    // basic GL state -----------------------------------------------------
+    // 6) Set up your basic GL state
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
-    glEnable(GL_NORMALIZE); // caso você use glScalef ou objetos não uniformes
-
-    //glPolygonMode(GL_FRONT, GL_LINE); // wireframe for debug – switch to GL_FILL for final renders
+    glEnable(GL_NORMALIZE);
+    //glPolygonMode(GL_FRONT, GL_LINE); // debug
     glClearColor(0.f, 0.f, 0.f, 0.f);
 
+    // 7) Enter the main loop
     glutMainLoop();
     return EXIT_SUCCESS;
 }
+

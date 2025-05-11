@@ -57,8 +57,7 @@ cmake-build-*/
 *.lock
 *.lck
 
-# Ignore everything
-*
+
 
 # But do not ignore directories
 !*/
